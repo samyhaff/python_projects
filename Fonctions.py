@@ -155,6 +155,8 @@ def Soustraire(Dictionnaire1,Dictionnaire2,NouveauDico):
             NouveauDico.append(Mot)
     return NouveauDico
 
+def 
+
 def ConvertirTexteEnTuple(DicoTexte,DicoTuple):
     try:
         with open(DicoTexte+".txt", 'r', encoding="utf-8") as FichierDicoTexte:
@@ -182,6 +184,14 @@ def ConvertirTupleEnTexte(DicoTuple,DicoTexte):
             print("Ecriture impossible.")
     except:
         print("Lecture impossible.")
+
+def StockerTuple(Tuple,NomFichierTuple):
+    try:
+        with open(NomFichierTuple, 'ab') as FichierTuple:
+                FichierTuplePickler = pickle.Pickler(FichierTuple)
+                FichierTuplePickler.dump(Tuple)
+    except:
+        print("Stockage en Tuple impossible.")
     
 
 def GénérerUnDictionnaire(Fichier,Dictionnaire):
