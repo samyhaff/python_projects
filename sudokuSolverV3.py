@@ -25,7 +25,7 @@ def vColumn(j, test,board):
 def vBlock(i, j, test,board):
     for I in range(3):
         for J in range(3):
-            if(board[i//3+I][j//3 + J] == test):
+            if (board[3 * (i//3)+I][3 * (j//3) + J] == test):
                 return True
     return False
 
@@ -65,7 +65,6 @@ def solve(board):
                 board[i][j] = k
                 if solve(board) == True:
                     return True
-                #board[i][j] = 0
         return False
 
 def aff(board):
