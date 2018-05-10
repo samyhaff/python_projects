@@ -209,5 +209,5 @@ def supprimerEspace(equation):
 #-------#
 
 str(equation)=input("Equation: ")
-
-print("La liste solution est: ",solution)
+main(equation)
+print("La liste solution est: ",listeSol)
