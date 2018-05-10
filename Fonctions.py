@@ -132,17 +132,31 @@ def Rechercher(search, Nombre=1):
     browser.close()
     return Urls
 
-def RécupérerUnSite(Url,FichierTexte):
+def StockerUnSite(Url,FichierTexte,Mode):
     try:
         html = requests.get(Url).content
         unicode_str = html.decode("utf8")
-        encoded_str = unicode_str.encode("ascii",'ignore')
+        encoded_str = unicode_str.encode("utf8",'ignore')
         news_soup = BeautifulSoup(encoded_str, "html.parser")
         a_text = news_soup.find_all('p')
         y=[re.sub(r'<.+?>',r'',str(a)) for a in a_text]
-        file = open(FichierTexte+".txt", "a")
+        file = open(FichierTexte+".txt", Mode)
         file.write(str(y))
         file.close()
+    except:
+        print("Le site suivant n'a pas pu être récupéré:")
+        print(Url)
+        print("")
+
+def RécupérerUnSite(Url):
+    try:
+        html = requests.get(Url).content
+        unicode_str = html.decode("utf8")
+        encoded_str = unicode_str.encode("utf8",'ignore')
+        news_soup = BeautifulSoup(encoded_str, "html.parser")
+        a_text = news_soup.find_all('p')
+        y=[re.sub(r'<.+?>',r'',str(a)) for a in a_text]
+        return y
     except:
         print("Le site suivant n'a pas pu être récupéré:")
         print(Url)
@@ -155,15 +169,13 @@ def Soustraire(Dictionnaire1,Dictionnaire2,NouveauDico):
             NouveauDico.append(Mot)
     return NouveauDico
 
-def 
-
-def ConvertirTexteEnTuple(DicoTexte,DicoTuple):
+def ConvertirTexteEnTuple(DicoTexte,DicoTuple,Mode):
     try:
         with open(DicoTexte+".txt", 'r', encoding="utf-8") as FichierDicoTexte:
              ChaineDicoTexte=FichierDicoTexte.read()
              Dico=ChaineDicoTexte.split(" ")
         try:
-            with open(DicoTuple, 'ab') as FichierDicoTuple:
+            with open(DicoTuple, Mode+'b') as FichierDicoTuple:
                 DicoTuplePickler = pickle.Pickler(FichierDicoTuple)
                 DicoTuplePickler.dump(Dico)
         except:
@@ -171,25 +183,33 @@ def ConvertirTexteEnTuple(DicoTexte,DicoTuple):
     except:
         print("Lecture impossible.")
 
-def ConvertirTupleEnTexte(DicoTuple,DicoTexte):
+def ConvertirTupleEnTexte(DicoTuple,DicoTexte,Mode):
     try:
         with open(DicoTuple, 'rb') as FichierDicoTuple:
             DicoTupleDepickler = pickle.Unpickler(FichierDicoTuple)
             DicoTuple = DicoTupleDepickler.load()
             Dico=" ".join(DicoTuple)
         try:
-            with open(DicoTexte+".txt", 'a', encoding="utf-8") as FichierDicoTexte:
+            with open(DicoTexte+".txt", Mode, encoding="utf-8") as FichierDicoTexte:
                  ChaineDicoTexte=FichierDicoTexte.write(Dico)
         except:
             print("Ecriture impossible.")
     except:
         print("Lecture impossible.")
 
-def StockerTuple(Tuple,NomFichierTuple):
+def StockerTuple(Tuple,NomFichierTuple,Mode):
     try:
-        with open(NomFichierTuple, 'ab') as FichierTuple:
+        with open(NomFichierTuple, Mode+'b') as FichierTuple:
                 FichierTuplePickler = pickle.Pickler(FichierTuple)
                 FichierTuplePickler.dump(Tuple)
+    except:
+        print("Stockage en Tuple impossible.")
+
+def SortirTuple(NomFichierTuple):
+    try:
+        with open(NomFichierTuple, 'rb') as FichierTuple:
+                FichierTupleDepickler = pickle.Unpickler(FichierTuple)
+                return DicoDepickler.load()
     except:
         print("Stockage en Tuple impossible.")
     
