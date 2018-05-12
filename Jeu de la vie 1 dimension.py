@@ -7,7 +7,7 @@ Height = 720
 
 L1=[0]*Width
 L2=[0]*Width
-L3=[0,0,1,1,1,1,1,0]
+L3=[1,0,0,0,0,0,0,1]
 
 w=Width
 h=Height
