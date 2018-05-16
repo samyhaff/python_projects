@@ -16,31 +16,97 @@ AlphabetCompletMajuscules="AÀÆBCÇDEÉÈÊËFGHIÎÏJKLMNOÔŒPQRSTUÙÛÜVWXY
 AlphabetTrèsComplet="aàæbcçdeéèêëfghiîïjklmnoôœpqrstuùûüvwxyÿzAÀÆBCÇDEÉÈÊËFGHIÎÏJKLMNOÔŒPQRSTUÙÛÜVWXYŸZ"
 Fin=".!?"
 Ponctuation=",.;!?':()-"
-CaractèresSpéciaux="#@&°_¨^+-=*$¥€£`%§/:;?!.,<>()"
+CaractèresSpéciaux="#@&°_¨^+-=*$¥€£`%§/:;?!.,<>\()\""
 Nombres="0123456789"
 
 
-Consonnes=["b","c","ç","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","y","ÿ","z"]
+Consonnes="bcçdfghjklmnpqrstvwxyÿz"
 Voyelles=["a","à","æ","e","é","è","ê","ë","i","î","ï","o","ô","œ","u","ù","û","ü"]
-VoyellesGroupées=[["a","à","æ"],["e","œ"],["é"],["è","ê","ë"],["i","î","ï","y"],["o","ô"],["u","ù","û","ü"]]
+SonsVoyelles=[["a","à","æ"],["e","œ"],["é"],["i","î","ï","y"],["o","ô"],["u","ù","û","ü"],["on"],["ou","oo"],["ai","ay","ei","ey","è","ê","ë"],["an","en"],["ain","ein","un","in"]]
+SonsConsonnes=[["bb","b"],["qu","ck","cc","c","k","q"],["dd","d"],["ff","ph","f"],["gg","gu","g"]]
 
 PronomsPersonnelsGroupés=[["je"],["tu"],["il,elle,on"],["nous"],["vous"],["ils,elles"]]
 PronomsPersonnelsPrincipaux=["je","tu","il","nous","vous","ils"]
 PronomsPersonnels=["je","tu","il","elle","on","nous","vous","ils","elles"]
 
-CombinaisonsVoyelles=[["on"],["ou","oo"],["ai","ay","ei","ey"]]
+Français=["le","la","les","de","des","un","une","et","à","il","ne","je",
+              "son","que","se","qui","se","dans","en","du","elle","au","ce",
+              "ces","pour","pas","vous","par","sur","faire","plus","dire",
+              "mon","lui","nous","comme","mais","avec","tout","y"]
+Anglais=["the","be","to","of","and","a","in","that","have","i","it","for"
+             ,"not","with","he","as","you","do","at","this","but","his","by",
+             "from","they","we","say","her","she","or","an","will","my","one",
+             "all","would","there","their","what","so","up","out","if","about",
+             "who","get","which","go","when","make","can","like","time",
+             "no","just","him","know","take","people","into","year","your",
+             "good","some","could","them","see","other","than","then","now",
+             "look","only","come","its","over","think","also","back","after",
+             "use","two","how","our","work","first","well","way","even","new",
+             "want","because","any","these","give","day","most","us"]
+  
+Langues=[Français,Anglais]
+
+CaractéristiquesMots=["Apparition totale","Apparition sur site","Synonyme","Précédé","Suivi","Langue"]
+
+#https://www.notrefamille.com/dictionnaire/definition/manger/
+
+
+#vide,français,autrelangue
 
 #Fonctions
 
 AfficherErreur=False
-Erreurs=[]
+
+
+def ComparerLangue(Tuple,Langue):
+    Nombre=0
+    Intrus=[]
+    for Mot in Langue:
+        if Tuple.count(Mot)>0:
+            Intrus.append(Mot*Tuple.count(Mot))
+    return Intrus
+
+def AjouterDictionnaire(Tuple,Dictionnaire):
+    Réduction=Réduire(Tuple)
+    for Mot in Réduction:
+        if Dictionnaire.count(Mot)==0:
+            Dictionnaire[Mot]=Réduction.count(Mot)
+        else:
+            Dictionnaire[Mot]=Dictionnaire[Mot]+Réduction.count(Mot)
+    return Dictionnaire
+        
+    
+
+def EliminerVide(Tuple):
+    while Tuple.count([])>0:
+        Tuple.remove([])
+    return Tuple
+
+def ExterminerVide(Tuple,Niveau):
+    Base=1
+    w
+    
+    
+    
+
+def ValiditéLangue(Tuple,Langue):
+    Exceptions=0
+    for LangueConsidérée in Langues:
+        if LangueConsidérée!=Langue:
+            Exceptions+=len(ComparerLangue(Tuple,LangueConsidérée))
+    Validité=int(len(ComparerLangue(Tuple,Langue))/len(Tuple)*100)
+    if Validité>5 and Exceptions==0:
+        return True
+    else:
+        return False
+    
 
 
 def Erreur(Fonction):
-    global AfficherErreur,Erreurs
+    global AfficherErreur
     if AfficherErreur:
         print("La fonction",Fonction,"n'a pas pue être exécutée.")
-    Erreurs.append(Fonction)
+    StockerTexte(Fonction+" ","Erreurs","a")
 
 def Numerer(Mot):
     try:
@@ -77,6 +143,34 @@ def Classer(Mot,Liste):
     except:
         Erreur("Classer")
 
+def DécomposerEnSyllables(Mot):
+    Mot=Mot.lower()
+    Tuple=[]
+    Début=0
+    if Consonnes.count(Mot[0])==1:
+        ExceptionBool=True
+    else:
+        ExceptionBool=False
+    for i in range(len(Mot)-1):
+        if Consonnes.count(Mot[i])==1:
+            if Voyelles.count(Mot[i+1])==1:
+                if ExceptionBool==False:
+                    Tuple.append(Mot[Début:i])
+                    Début=i
+                else:
+                    ExceptionBool=False
+        if Mot[i]==" ":
+            Tuple.append(Mot[Début:i])
+            Début=i+1
+            if Consonnes.count(Mot[i+1])==1:
+                ExceptionBool=True
+            else:
+                ExceptionBool=False                   
+    Tuple.append(Mot[Début:])
+    return Tuple
+
+
+
 def Voisinage(NuméroLettre,Mot):
     try:
         Voisins=[]
@@ -91,7 +185,11 @@ def Voisinage(NuméroLettre,Mot):
 
 def CompterSyllables(Mot):
     try:
-        Syllables=0
+        Mot=Mot.lower()
+        if Mot[-1]=="e" or Mot[-2:]=="e.":
+            Syllables=-1
+        else:
+            Syllables=0
         NouvelleVoyelle=False
         n=0
         for Lettre in Mot:
@@ -126,7 +224,7 @@ def Associer(Liste,Tuple):
     except:
         Erreur("Associer")
 
-def Reduire(Entree):
+def Réduire(Entree):
     try:
         Sortie=[Entree[0]]
         for i in range(0,len(Entree)-1):
@@ -134,7 +232,7 @@ def Reduire(Entree):
                 Sortie.append(Entree[i+1])
         return Sortie
     except:
-        Erreur("Reduire")
+        Erreur("Réduire")
 
 def RechercherUrl(search):
     try:
@@ -195,6 +293,15 @@ def ConvertirListeEnNombre(Liste):
     except:
         Erreur("ConvertirListeEnNombre")
 
+def PermuterAléatoirement(Entrée):
+    Sortie=[]
+    while Entrée!=[]:
+        i=random.randint(0,len(Entrée)-1)
+        Sortie.append(Entrée[i])
+        del Entrée[i]
+    return Sortie
+        
+
 def Désincanter(Tuple):
     Sortie=[]
     for i in Tuple:
@@ -231,9 +338,9 @@ def TraduireTexteEnTuple(Nom,Mode):
         except:
             print("Ecriture impossible.")
     except:
-        Erreur("TraduireTexteEnTuple")
+        Erreur("ConvertirTexteEnTuple")
 
-def TraduireTupleEnTexte(Nom,Mode):
+def TraduieTupleEnTexte(Nom,Mode):
     try:
         with open(Nom, 'rb') as FichierDicoTuple:
             DicoTupleDepickler = pickle.Unpickler(FichierDicoTuple)
@@ -242,10 +349,13 @@ def TraduireTupleEnTexte(Nom,Mode):
         with open(Nom+".txt", Mode, encoding="utf-8") as FichierDicoTexte:
              ChaineDicoTexte=FichierDicoTexte.write(Dico)
     except:
-        Erreur("TraduireTupleEnTexte")
+        Erreur("ConvertirTupleEnTexte")
 
 def SplitParagraphes(Chaine):
-    return Chaine.split("\n \n")
+    try:
+        return Chaine.split("\n \n")
+    except:
+        Erreur("SplitParagraphes")
 
 def SplitPhrases(Chaine):
     try:
@@ -300,17 +410,95 @@ def SplitEléments(Chaine):
         Erreur("SplitEléments")
 
 
-def SplitMots(Chaine):
+def SplitMotsRaté(Chaine):
     try:
         Chaine=Chaine.lower()
         for i in CaractèresSpéciaux:
             Chaine=Chaine.replace(i," ")
+        for i in Nombres:
+            Chaine=Chaine.replace(i," ")
+        Chaine=Chaine.replace("'"," ")
         return Chaine[0:len(Chaine)-1].split(" ")
+    except:
+        Erreur("SplitMotsRaté")
+
+def SplitMots(Chaine):
+    try:
+        Chaine=Chaine.lower()
+        Tuple=[]
+        MotBool=False
+        DébutBool=False
+        for i in range(len(Chaine)):
+            MotBool=False
+            if AlphabetCompletMinuscules.count(Chaine[i])==1:
+                MotBool=True
+                if DébutBool==False:
+                    DébutBool=True
+                    Mot=""
+            else:
+                MotBool=False
+            if MotBool:
+                Mot+=Chaine[i]
+            if DébutBool and MotBool==False:
+                if len(Mot)>=2 and CompterSyllables(Mot)>0:
+                    Tuple.append(Mot)
+                DébutBool=False
+                MotBool=False
+        return Tuple
     except:
         Erreur("SplitMots")
 
+def DicoDesSynos(Chaine):
+    Tuple=[]
+    MotBool=False
+    for i in range(len(Chaine)-5):
+        if Chaine[i:i+1]=="\">":
+            MotBool=True
+            Début=i+2
+        if MotBool and AlphabetTrèsComplet.count(Chaine[i])==0:
+            MotBool=False
+        if Chaine[i:i+3]=="</a>" and MotBool:
+            Tuple.append(Chaine[Début:i-1])
+            MotBool=False
+    print(Tuple)
+            
+            
+            
+        
+        
+    
 
-def StockerTuple(Tuple,NomFichierTuple,Mode):
+def TrouverSynonymes(Mot):
+    Tuple=[]
+    Mot=Mot.lower()
+    Url="https://www.notrefamille.com/dictionnaire/definition/"+Mot+"/"
+    CodeSource=DéterminerCodeSource(Url)
+    #Extraire("<a href=\"?mot=",[],">)
+    Extraire("\">",[],"</a>")
+    return Tuple
+    
+def TrouverDansChaine(SousChaine,Chaine):
+    try:
+        Len=len(Chaine)-len(SousChaine)
+        for i in range(Len):
+            if Chaine[i:i+len(SousChaine)]==SousChaine:
+                return i
+        return None
+    except:
+        Erreur("TrouverDansChaine")
+        
+
+def EliminerCopies(Liste):
+    try:
+        for i in Liste:
+            while Liste.count(i)>1:
+                Liste.remove(i)    
+        return Liste
+    except:
+        Erreur("EliminerCopies")
+
+
+def StockerVariable(Tuple,NomFichierTuple,Mode):
     try:
         with open(NomFichierTuple, Mode+'b') as FichierTuple:
             FichierTuplePickler = pickle.Pickler(FichierTuple)
@@ -318,7 +506,7 @@ def StockerTuple(Tuple,NomFichierTuple,Mode):
     except:
         Erreur("StockerTuple")
 
-def SortirTuple(NomFichierTuple):
+def SortirVariable(NomFichierTuple):
     try:
         with open(NomFichierTuple, 'rb') as FichierTuple:
             FichierTupleDepickler = pickle.Unpickler(FichierTuple)
@@ -331,6 +519,7 @@ def SortirTuple(NomFichierTuple):
     except:
         Erreur("SortirTuple")
 
+
 def SortirTexte(Fichier):
     try:
         with open(Fichier+".txt", "r",encoding="utf-8") as FichierTexte:
@@ -339,7 +528,118 @@ def SortirTexte(Fichier):
     except:
         Erreur("SortirTexte")
 
+def Sortir(Fichier):
+    try:
+        with open(Fichier, "r",encoding="utf-8") as FichierTexte:
+            texte=FichierTexte.read()
+        return texte
+    except:
+        Erreur("Sortir")
+
+#Permutation
+
+def prod(Liste):
+    Nombre=1
+    for i in Liste:
+        Nombre*=i
+    return Nombre
+
+def sum(Liste):
+    Nombre=1
+    for i in Liste:
+        Nombre+=i
+    return Nombre
+
+def size(Liste):
+    Nombre=1
+    Coefficient=1
+    for i in Liste:
+        Nombre+=i*Coefficient
+        Coefficient*=i
+    return Nombre
+        
+def AjouterSystème(Progression,Système,Ajout):
+    Nombre=SortirSystème(Progression,Système)
+    Nombre=(Nombre+Ajout)%size(Système)
+    Progression=EntrerSystème(Nombre,Système)
+    return Progression
+
+def SortirSystème(Progression,Système):
+    Nombre=0
+    Coefficient=1
+    for i in range(len(Système)):
+        Nombre+=Progression[-i-1]*Coefficient
+        Coefficient*=Système[-i-1]
+    return Nombre
+
+def EntrerSystème(Nombre,Système):
+    Progression=[]
+    Coefficient=prod(Système)
+    for i in range(len(Système)):
+        Coefficient//=Système[i]
+        Progression.append(Nombre//Coefficient)
+        Nombre=Nombre%Coefficient
+    return Progression
+
+#IA
+
+def MoyenneParagraphes(Structure):
+    Nombre=0
+    for i in Structure:
+        Nombre+=len(i)
+    return Nombre/len(Structure)
+
+#Statistiques
+
+def Statistiques(Liste):
+    Liste.sort()
+    Indice1erQuartile=len(Liste)//4
+    IndiceMédianne=len(Liste)//2
+    Indice3eQuartile=(3*len(Liste))//4
+    Statistiques={}
+    Moyenne=0
+    v1erQuartile=0
+    Médianne=0
+    v3eQuartile=0
+    for i in range(len(Liste)):
+        Moyenne+=Liste[i]
+        if i==Indice1erQuartile:
+            v1erQuartile=Liste[i]
+        if i==IndiceMédianne:
+            Médianne=Liste[i]
+        if i==Indice3eQuartile:
+            v3eQuartile=Liste[i]
+    Moyenne=Moyenne/len(Liste)
+    Réduite=Réduire(Liste)
+    Maximum=0
+    Majorité=0
+    for i in Réduite:
+        if Liste.count(i)>Maximum:
+            Maximum=Liste.count(i)
+            Majorité=i
+    Statistiques["Moyenne"]=Moyenne
+    Statistiques["Médianne"]=Médianne
+    Statistiques["Majorité"]=Majorité
+    Statistiques["1er Quartile"]=v1erQuartile
+    Statistiques["3e Quartile"]=v3eQuartile
+    Statistiques["Ecart-Type"]=v3eQuartile-v1erQuartile
+    Statistiques["Minimum"]=Liste[0]
+    Statistiques["Maximum"]=Liste[-1]
+    Statistiques["Etendu"]=Liste[-1]-Liste[0]
     
+    return Statistiques
+    
+def StatsParagraphes(Structure):
+    Liste=[]
+    for i in Structure:
+        Liste.append(len(i))
+    return Liste
+
+    
+    
+
+
+#Ancien
 
 def GenererDictionnaire(Fichier,Dictionnaire):
     try:
