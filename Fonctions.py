@@ -1,3 +1,5 @@
+import bs4
+from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup
 import requests
 import re
@@ -6,18 +8,23 @@ import random
 import numpy
 import pickle
 import selenium.webdriver as webdriver
+import pygame
+from pygame.locals import *
+
 
 #Listes d'Alphabet
 Alphabet="abcdefghijklmnopqrstuvwxyz"
 Minuscules="abcdefghijklmnopqrstuvwxyz"
 Majuscules="ABCDEGHIJKLMNOPQRSTUVWXYZ"
-AlphabetCompletMinuscules="aàæbcçdeéèêëfghiîïjklmnoôœpqrstuùûüvwxyÿz"
-AlphabetCompletMajuscules="AÀÆBCÇDEÉÈÊËFGHIÎÏJKLMNOÔŒPQRSTUÙÛÜVWXYŸZ"
-AlphabetTrèsComplet="aàæbcçdeéèêëfghiîïjklmnoôœpqrstuùûüvwxyÿzAÀÆBCÇDEÉÈÊËFGHIÎÏJKLMNOÔŒPQRSTUÙÛÜVWXYŸZ"
+MinusculesComplètes="aàæâbcçdeéèêëfghiîïjklmnoôœpqrstuùûüvwxyÿz"
+MajusculesComplètes="AÀÆÂBCÇDEÉÈÊËFGHIÎÏJKLMNOÔŒPQRSTUÙÛÜVWXYŸZ"
+AlphabetComplet="aàæâbcçdeéèêëfghiîïjklmnoôœpqrstuùûüvwxyÿzAÀÆÂBCÇDEÉÈÊËFGHIÎÏJKLMNOÔŒPQRSTUÙÛÜVWXYŸZ"
 Fin=".!?"
 Ponctuation=",.;!?':()-"
-CaractèresSpéciaux="#@&°_¨^+-=*$¥€£`%§/:;?!.,<>\()\""
+CaractèresSpéciaux="#@&°_¨^+-=*$¥€£`\%§/\"<>"
 Nombres="0123456789"
+
+Tout=AlphabetComplet+Ponctuation+CaractèresSpéciaux+" "
 
 
 Consonnes="bcçdfghjklmnpqrstvwxyÿz"
@@ -26,13 +33,9 @@ SonsVoyelles=[["a","à","æ"],["e","œ"],["é"],["i","î","ï","y"],["o","ô"],[
 SonsConsonnes=[["bb","b"],["qu","ck","cc","c","k","q"],["dd","d"],["ff","ph","f"],["gg","gu","g"]]
 
 PronomsPersonnelsGroupés=[["je"],["tu"],["il,elle,on"],["nous"],["vous"],["ils,elles"]]
-PronomsPersonnelsPrincipaux=["je","tu","il","nous","vous","ils"]
-PronomsPersonnels=["je","tu","il","elle","on","nous","vous","ils","elles"]
+PronomsPersonnels=["je","tu","il","nous","vous","ils"]
+PronomsPersonnelsComplets=["je","tu","il","elle","on","nous","vous","ils","elles"]
 
-Français=["le","la","les","de","des","un","une","et","à","il","ne","je",
-              "son","que","se","qui","se","dans","en","du","elle","au","ce",
-              "ces","pour","pas","vous","par","sur","faire","plus","dire",
-              "mon","lui","nous","comme","mais","avec","tout","y"]
 Anglais=["the","be","to","of","and","a","in","that","have","i","it","for"
              ,"not","with","he","as","you","do","at","this","but","his","by",
              "from","they","we","say","her","she","or","an","will","my","one",
@@ -44,9 +47,6 @@ Anglais=["the","be","to","of","and","a","in","that","have","i","it","for"
              "use","two","how","our","work","first","well","way","even","new",
              "want","because","any","these","give","day","most","us"]
   
-Langues=[Français,Anglais]
-
-CaractéristiquesMots=["Apparition totale","Apparition sur site","Synonyme","Précédé","Suivi","Langue"]
 
 #https://www.notrefamille.com/dictionnaire/definition/manger/
 
@@ -56,7 +56,85 @@ CaractéristiquesMots=["Apparition totale","Apparition sur site","Synonyme","Pr�
 #Fonctions
 
 AfficherErreur=False
+Erreurs=[]
 
+def Découper(Chaine,Liste):
+    Tuple=[]
+    j=0
+    Début=0
+    Bool=False
+    done=False
+    i=0
+    while i<len(Chaine)-len(Liste[j])+1 and not done:
+        if Chaine[i:i+len(Liste[j])]==Liste[j]:
+            if j<len(Liste)-1:
+                if Bool:
+                    Tuple.append(Chaine[Début:i])
+                Début=i+len(Liste[j])
+                j+=1
+                Bool=True
+            else:
+                if Bool and len(Chaine[Début:i])>0:
+                    Tuple.append(Chaine[Début:i])
+                done=True
+        i+=1
+    return Tuple
+
+def Phrases(Structure):
+    Phrases=SortirVariable("Phrases")
+    if Phrases==None:
+        Phrases=Désincanter(Désincanter(Structure))
+        i=0
+        while i<len(Phrases):
+            Phrases[i]="".join(Phrases[i])
+            i+=1
+    return Phrases
+
+    
+def Répondre(Chaine):
+    Phrases=Phrases(Structure)
+    if Phrases.count(Chaine)==0:
+        print("Je ne comprends pas.")
+    else:
+        Réponses=[]
+        Indices=RécupérerIndices(Sujet,Phrases)
+        for i in Indices:
+            Réponses.append(Phrases[i+1])
+        Ordi=Réponses[random.randint(0,len(Réponses)-1)]
+        return Réponse
+    
+
+def InverserMatrice(Matrice):
+    Inversé=[[None]*len(Matrice) for i in range(len(Matrice[0]))]
+    for i in range(len(Matrice)):
+        for j in range(len(Matrice[i])):
+            Inversé[i][j]=Matrice[j][i]
+    return Inversé
+
+def ExterminerNone(l):
+    if type(l) != list:
+        return
+    l[:] = [i for i in l if i is not None]
+    for e in l:
+       ExterminerNone(e)
+
+def RécupérerIndices(Elément,Liste):
+    Indices=[]
+    i=0
+    while Liste.count(Elément)>0:
+        Indices.append(Liste.index(Elément)+i)
+        Liste.remove(Elément)
+        i+=1
+    return Indices
+
+def Dict(Liste):
+    Dictionnaire={}
+    for i in Liste:
+        Dictionnaire[i]=None
+    return Dictionnaire
+        
+def SplitBalises(Chaine):
+    return Extraire(Chaine,Tout,">","<")
 
 def ComparerLangue(Tuple,Langue):
     Nombre=0
@@ -106,6 +184,7 @@ def Erreur(Fonction):
     global AfficherErreur
     if AfficherErreur:
         print("La fonction",Fonction,"n'a pas pue être exécutée.")
+    Erreurs.append(Fonction)
     StockerTexte(Fonction+" ","Erreurs","a")
 
 def Numerer(Mot):
@@ -224,13 +303,12 @@ def Associer(Liste,Tuple):
     except:
         Erreur("Associer")
 
-def Réduire(Entree):
+def Réduire(Liste):
     try:
-        Sortie=[Entree[0]]
-        for i in range(0,len(Entree)-1):
-            if Entree[i]!=Entree[i+1]:
-                Sortie.append(Entree[i+1])
-        return Sortie
+        for i in Liste:
+            while Liste.count(i)>1:
+                Liste.remove(i)    
+        return Liste
     except:
         Erreur("Réduire")
 
@@ -353,7 +431,7 @@ def TraduieTupleEnTexte(Nom,Mode):
 
 def SplitParagraphes(Chaine):
     try:
-        return Chaine.split("\n \n")
+        return [Chaine]
     except:
         Erreur("SplitParagraphes")
 
@@ -364,7 +442,7 @@ def SplitPhrases(Chaine):
         DebutBool=False
         for i in range(len(Chaine)):
             PhraseBool=False
-            if AlphabetCompletMinuscules.count(Chaine[i])==1 or Ponctuation.count(Chaine[i])==1 or Chaine[i]==" " or Nombres.count(Chaine[i])==1:
+            if AlphabetComplet.count(Chaine[i])==1 or Ponctuation.count(Chaine[i])==1 or Chaine[i]==" " or Nombres.count(Chaine[i])==1:
                 PhraseBool=True
             else:
                 PhraseBool=False
@@ -373,7 +451,7 @@ def SplitPhrases(Chaine):
                 if CaractèresSpéciaux.count(Chaine[i])==1 and CaractèresSpéciaux.count(Chaine[i+1])==1:
                     PhraseBool=False
                     DebutBool=False
-            if AlphabetCompletMajuscules.count(Chaine[i])==1:
+            if MajusculesComplètes.count(Chaine[i])==1:
                 DebutBool=True
                 PhraseBool=True
                 Phrase=""
@@ -389,8 +467,8 @@ def SplitPhrases(Chaine):
         Erreur("SplitPhrases")
 
 def AssocierCaractère(Caractère):
-    if AlphabetTrèsComplet.count(Caractère)==1:
-        return "Alphabet"
+    if AlphabetComplet.count(Caractère)==1:
+        return "AlphabetComplet"
     elif CaractèresSpéciaux.count(Caractère):
         return "CaractèresSpéciaux"
     else:
@@ -430,7 +508,7 @@ def SplitMots(Chaine):
         DébutBool=False
         for i in range(len(Chaine)):
             MotBool=False
-            if AlphabetCompletMinuscules.count(Chaine[i])==1:
+            if MinusculesComplètes.count(Chaine[i])==1:
                 MotBool=True
                 if DébutBool==False:
                     DébutBool=True
@@ -455,7 +533,7 @@ def DicoDesSynos(Chaine):
         if Chaine[i:i+1]=="\">":
             MotBool=True
             Début=i+2
-        if MotBool and AlphabetTrèsComplet.count(Chaine[i])==0:
+        if MotBool and AlphabetComplet.count(Chaine[i])==0:
             MotBool=False
         if Chaine[i:i+3]=="</a>" and MotBool:
             Tuple.append(Chaine[Début:i-1])
@@ -464,18 +542,103 @@ def DicoDesSynos(Chaine):
             
             
             
+def GénérerConditions():
+    Conditions=[]
+    return Condtions
         
-        
-    
 
-def TrouverSynonymes(Mot):
+def ExtraireRaté(Chaine,Groupe,Début,Fin):
+    Chaine=str(Chaine)
+    Extraits=[]
+    Bool=False
+    DébutBool=True
+    début=0
+    Elément=""
+    Groupe=str(Groupe)
+    for i in range(len(Chaine)):
+        if i+len(Début)<len(Chaine):
+            if Chaine[i:i+len(Début)]==Début and Bool==False:
+                début=i+len(Début)
+                DébutBool=True
+        if DébutBool==True and i>=début:
+            Bool=True
+        if Bool==True:
+            if Groupe.count(Chaine[i])>0:
+                Elément+=Chaine[i]
+            else:
+                Bool=False
+                DébutBool=False
+                Elément=""
+        if i+1+len(Fin)<len(Chaine):
+            if Chaine[i+1:i+1+len(Fin)]==Fin and Bool==True:
+                if len(Elément)>1:
+                    Extraits.append(Elément)
+                DébutBool=False
+                Bool=False
+                Elément=""
+    return Extraits
+
+def Extraire(Chaine,Groupe,Début,Fin):
+    début=False
     Tuple=[]
-    Mot=Mot.lower()
-    Url="https://www.notrefamille.com/dictionnaire/definition/"+Mot+"/"
-    CodeSource=DéterminerCodeSource(Url)
-    #Extraire("<a href=\"?mot=",[],">)
-    Extraire("\">",[],"</a>")
+    Elément=""
+    for i in range(len(Chaine)-len(Fin)+1):
+        if Chaine[i:i+len(Fin)]==Fin:
+            début=False
+            if len(Elément)>0:
+                Tuple.append(Elément)
+        if Chaine[i:i+len(Début)]==Début:
+            début=True
+            Elément=""
+            Mémoire=i
+        if Groupe.count(Chaine[i])>0 and début:
+            if i>=Mémoire+len(Début):
+                Elément+=Chaine[i]
+        else:
+            début=False
+            Elément=""
     return Tuple
+    
+def Synonymes(Mot):
+    try:
+        Synonymes=[]
+        Mot=Mot.lower()
+        Dictionnaires=["http://www.synonymes.com/synonyme.php?mot="+Mot+"&x=0&y=0",
+                       "http://www.crisco.unicaen.fr/des/synonymes/"+Mot,
+                       "www.synonymo.fr/synonyme/"+Mot]
+        for Url in Dictionnaires:
+            CodeSource=RécupérerCodeSource(Url)
+            Synonymes.extend(Extraire(CodeSource,MinusculesComplètes+" ","\">","</a>"))
+        Synonymes.sort()
+        Synonymes=Réduire(Synonymes)
+        Synonymes=Soustraire(Synonymes,["user","avertissement"])
+        return Synonymes
+    except:
+        Erreur("Synonymes")
+
+def Définitions(Mot):
+    try:
+        Définitions=[]
+        Mot=Mot.lower()
+        Dictionnaires=["http://www.le-dictionnaire.com/definition.php?mot="+Mot]
+        for Url in Dictionnaires:
+            CodeSource=RécupérerCodeSource(Url)
+            Définitions.extend(Extraire(CodeSource,AlphabetComplet+Ponctuation+" ","\">","</a>"))
+        Définitions=Soustraire(SplitPhrases(" ".join(Définitions)),["Conjugaison.","Calculatrice.","Définition manquante ou compléter."])
+        Définitions=Réduire(Définitions)
+        return Définitions
+    except:
+        Erreur("Définition")
+
+def RécupérerCodeSource(Url):
+    try:
+        uClient = uReq(Url)
+        page_html = uClient.read()
+        uClient.close()
+        return str(BeautifulSoup(page_html, "html.parser"))
+    except:
+        Erreur("RécupérerCodeSource")
+        
     
 def TrouverDansChaine(SousChaine,Chaine):
     try:
@@ -486,17 +649,7 @@ def TrouverDansChaine(SousChaine,Chaine):
         return None
     except:
         Erreur("TrouverDansChaine")
-        
-
-def EliminerCopies(Liste):
-    try:
-        for i in Liste:
-            while Liste.count(i)>1:
-                Liste.remove(i)    
-        return Liste
-    except:
-        Erreur("EliminerCopies")
-
+    
 
 def StockerVariable(Tuple,NomFichierTuple,Mode):
     try:
@@ -535,6 +688,37 @@ def Sortir(Fichier):
         return texte
     except:
         Erreur("Sortir")
+
+def Progression(V,D,F):
+    pygame.init()
+    done=False
+    Width=500
+    Height=20
+    
+    BLACK    = (   0,   0,   0)
+    WHITE    = ( 255, 255, 255)
+    GREEN    = (   0, 255,   0)
+    RED      = ( 255,   0,   0)
+    BLUE     = (   0,   0, 255)
+
+    COULEUR=GREEN
+    FOND=BLACK
+
+    size=(Width,Height)
+    screen = pygame.display.set_mode(size)
+     
+    pygame.display.set_caption("Progression")
+    clock = pygame.time.Clock()
+    screen.fill(FOND)
+    
+    E=(Width*V)//(F-D)
+    
+    pygame.draw.rect(screen, COULEUR, (0,0,E,Height),0)
+    pygame.display.flip()
+    clock.tick(1000000)
+    if V>=F or done:
+        pygame.quit()
+
 
 #Permutation
 
@@ -581,7 +765,7 @@ def EntrerSystème(Nombre,Système):
         Nombre=Nombre%Coefficient
     return Progression
 
-#IA
+#IA#
 
 def MoyenneParagraphes(Structure):
     Nombre=0
@@ -589,7 +773,13 @@ def MoyenneParagraphes(Structure):
         Nombre+=len(i)
     return Nombre/len(Structure)
 
-#Statistiques
+#Installations#
+
+def InstallerBeautifulSoup():
+    return "moche"
+    
+
+#Statistiques#
 
 def Statistiques(Liste):
     Liste.sort()
