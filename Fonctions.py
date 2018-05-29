@@ -56,8 +56,26 @@ Anglais=["the","be","to","of","and","a","in","that","have","i","it","for"
 #Fonctions
 
 AfficherErreur=False
+BoolAff=True
 Erreurs=[]
 
+
+def Aff(Textes):
+    global BoolAff
+    if BoolAff:
+        print(Texte)
+
+def Show(Texte,Taille,Bool=True):
+    pygame.init()
+    fenetre = pygame.display.set_mode((Taille, 20))
+    font=pygame.font.Font(None, 24)
+    VERT=(255,255,0)
+    text = font.render(Texte,1,VERT)
+    fenetre.blit(text, (0, 0))
+    pygame.display.flip()
+    if Bool==False:
+        pygame.quit()
+            
 def Découper(Chaine,Liste):
     Tuple=[]
     j=0
@@ -80,7 +98,110 @@ def Découper(Chaine,Liste):
         i+=1
     return Tuple
 
-def Phrases(Structure):
+def SéquencesCommunes(Chaine1,Chaine2):
+    Chaine1.lower()
+    Chaine2.lower()
+    Séquences=[]
+    m=min(len(Chaine1),len(Chaine2))
+    for t in range(0,m):
+        for i in range(len(Chaine1)-t):
+            for j in range(len(Chaine2)-t):
+                if Chaine1[i:i+t+1]==Chaine2[j:j+t+1]:
+                    Séquences.append(Chaine1[i:i+t+1])
+    Séquences.reverse()
+    return Séquences
+
+def Ressemblance(Chaine1,Chaine2):
+    Séquences=SéquencesCommunes(Chaine1,Chaine2)
+    m=min(len(Chaine1),len(Chaine2))
+    try:
+        Ressemblance=(sum([len(i) for i in Séquences])-1)/len(Séquences)
+        return Ressemblance
+    except:
+        return 0
+
+def Rsb(c,C):
+    c.lower()
+    C.lower()
+    m=min(len(c),len(C))
+    p=float(len(c)+len(C))/2
+    for t in range(0,m):
+        l=m-1-t
+        for i in range(len(c)-l):
+            for j in range(len(C)-l):
+                if c[i:i+l+1]==C[j:j+l+1]:
+                    return l/p
+    return 0
+    
+
+def Répondre2(Entrée,Phrases):
+    Dico={}
+    l=len(Phrases)
+    for i in range(l):
+        Dico[str(Rsb(Phrases[i],Entrée))]=i
+        Progression(i,0,l)
+    Ressemblances=list(Dico)
+    Ressemblances.sort()
+    Ressemblances.reverse()
+    Proba=[]
+    for i in range(len(Liste)):
+        Proba.append(Ressemblances[i]/2**i)
+    r=random.randfloat(0,len(sum(Proba)))
+    i=0
+    n=0
+    while i<r:
+        i+=Proba[n]
+        n+=1
+    Sortie=Phrases[Dico[Ressemblances[i]]+1]
+    return Sortie
+
+def Répondre3(Entrée,Phrases,Bool=False,Pertinence=0.5):
+    e=Entrée
+    P=Phrases
+    l=len(P)
+    v=0
+    i=0
+    p=0
+    while p<l:
+        if Rsb(P[p],e)>v:
+            i=p
+            v=Rsb(P[p],e)
+        p+=1
+    print(v,Pertinence)
+    try:
+        if Bool:
+            if v>Pertinence:
+                return Phrases[i+1]
+            else:
+                #return Phrases[i+1]+"\n Pertinence: "+str(v)
+                return Phrases[i+1]
+        if v>Pertinence:
+            return Phrases[i+1]
+        else:
+            return None
+    except:
+        return None
+
+
+def ChatBox2():
+    Structure=SortirVariable("Structure")
+    ExterminerNone(Structure)
+    #Phrases=Phraser(Structure)
+    Historique=SortirVariable("Messenger")
+    Phrases=[]
+    for Message in Historique:
+        if Message[0]=="P":
+            Phrases.append(Message[10:])
+    Bot="Bonjour"
+    print(Bot)
+    User=str(input(""))
+    while User!=Ressemblance(User,"au revoir")<2:
+        Bot=Répondre3(User,Phrases)
+        print(Bot)
+        User=str(input(""))
+                          
+
+def Phraser(Structure):
     Phrases=SortirVariable("Phrases")
     if Phrases==None:
         Phrases=Désincanter(Désincanter(Structure))
@@ -92,17 +213,22 @@ def Phrases(Structure):
 
     
 def Répondre(Chaine):
-    Phrases=Phrases(Structure)
+    Structure=SortirVariable("Structure")
+    ExterminerNone(Structure)
+    Phrases=Phraser(Structure)
     if Phrases.count(Chaine)==0:
-        print("Je ne comprends pas.")
+        return None
     else:
         Réponses=[]
-        Indices=RécupérerIndices(Sujet,Phrases)
+        Indices=RécupérerIndices(Chaine,Phrases)
         for i in Indices:
             Réponses.append(Phrases[i+1])
-        Ordi=Réponses[random.randint(0,len(Réponses)-1)]
+        Réponse=Réponses[random.randint(0,len(Réponses)-1)]
         return Réponse
-    
+
+def lenD(Dictionnaire):
+    Liste=list(Dictionnaire)
+    return len(Liste)
 
 def InverserMatrice(Matrice):
     Inversé=[[None]*len(Matrice) for i in range(len(Matrice[0]))]
@@ -162,9 +288,7 @@ def EliminerVide(Tuple):
 
 def ExterminerVide(Tuple,Niveau):
     Base=1
-    w
-    
-    
+    w    
     
 
 def ValiditéLangue(Tuple,Langue):
@@ -689,30 +813,32 @@ def Sortir(Fichier):
     except:
         Erreur("Sortir")
 
+def TempsRestant(Position,Début,Fin,InstantDébut,InstantPosition):
+    p=Position
+    d=Début
+    f=Fin
+    td=InstantDébut
+    tp=InstantPosition
+    return ((f-p)*(tp-td))/(p+1-d)
+
 def Progression(V,D,F):
     pygame.init()
     done=False
     Width=500
     Height=20
-    
     BLACK    = (   0,   0,   0)
     WHITE    = ( 255, 255, 255)
     GREEN    = (   0, 255,   0)
     RED      = ( 255,   0,   0)
     BLUE     = (   0,   0, 255)
-
     COULEUR=GREEN
     FOND=BLACK
-
     size=(Width,Height)
     screen = pygame.display.set_mode(size)
-     
     pygame.display.set_caption("Progression")
     clock = pygame.time.Clock()
     screen.fill(FOND)
-    
     E=(Width*V)//(F-D)
-    
     pygame.draw.rect(screen, COULEUR, (0,0,E,Height),0)
     pygame.display.flip()
     clock.tick(1000000)
