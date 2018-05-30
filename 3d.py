@@ -19,11 +19,11 @@ import time
 
 #Bases#
 
-T=50
+T=500
 
 Repère=["x","y","z"]
 
-EcranAtt={"Longueur":1440,"Hauteur":700}
+EcranAtt={"Longueur":1440,"Hauteur":900}
 VisionAtt={"Horizontal":140,"Vertical":80} #180,90
 EspaceAtt={"Longueur":T,"Hauteur":T,"Profondeur":T}
 
@@ -36,7 +36,7 @@ P=EspaceAtt["Profondeur"]
 #Positions#
 
 Milieu=[L//2,H//2,P//2]
-P1=[L//2+80,H//2-6,0]
+P1=[L//2+80,H//2-35,0]
 P5=[L//2+8,H//2-6,0]
 P2=[350,150,250]
 P3=[3,1,2]
@@ -375,7 +375,7 @@ def Angle(Vecteur1,Vecteur2):
 def Main():
     print("Création de l'Espace")
     Espace=Dimensionner(EspaceAtt)
-    Cube=Dimensionner(P4)
+    Cube=Dimensionner(P2)
     #Cube=Agrandir(Cube,2)
 
     print("Création de l'Ecran")
@@ -391,7 +391,7 @@ def Main():
     Espace=Insérer(Espace,Cube,Milieu)
 
     print("Fabrication de l'Image")
-    Ecran=Fabriquer(Espace,Ecran,VisionAtt,P5,Milieu,1)
+    Ecran=Fabriquer(Espace,Ecran,VisionAtt,P1,Milieu,0.1)
     #Ecran=Face(Espace,Ecran)
     Ecran=RemplacerDansPlan(Ecran,None,FOND)
 
