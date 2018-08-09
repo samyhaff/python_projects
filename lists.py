@@ -1,86 +1,124 @@
-# A simple Python program to introduce a linked list
-
-# Node class
 class Node:
+    def __init__(self,initdata):
+        self.data = initdata
+        self.next = None
 
-    # Function to initialise the node object
-    def __init__(self, data):
-        self.data = data  # Assign data
-        self.next = None  # Initialize next as null
+    def getData(self):
+        return self.data
+
+    def getNext(self):
+        return self.next
+
+    def setData(self,newdata):
+        self.data = newdata
+
+    def setNext(self,newnext):
+        self.next = newnext
 
 
-# Linked List class contains a Node object
-class LinkedList:
+class UnorderedList:
 
-    # Function to initialize head
     def __init__(self):
         self.head = None
 
+    def isEmpty(self):
+        return self.head == None
 
-# Code execution starts here
-if __name__=='__main__':
+    def add(self,item):
+        temp = Node(item)
+        temp.setNext(self.head)
+        self.head = temp
 
-    # Start with the empty list
-    llist = LinkedList()
+    def size(self):
+        current = self.head
+        count = 0
+        while current != None:
+            count = count + 1
+            current = current.getNext()
 
-    llist.head  = Node(1)
-    second = Node(2)
-    third  = Node(3)
+        return count
 
-    '''
-    Three nodes have been created.
-    We have references to these three blocks as first,
-    second and third
+    def search(self,item):
+        current = self.head
+        found = False
+        while current != None and not found:
+            if current.getData() == item:
+                found = True
+            else:
+                current = current.getNext()
 
-    llist.head        second              third
-         |                |                  |
-         |                |                  |
-    +----+------+     +----+------+     +----+------+
-    | 1  | None |     | 2  | None |     |  3 | None |
-    +----+------+     +----+------+     +----+------+
-    '''
+        return found
 
-    llist.head.next = second; # Link first node with second
+    def remove(self,item):
+        current = self.head
+        previous = None
+        found = False
+        while not found:
+            if current.getData() == item:
+                found = True
+            else:
+                previous = current
+                current = current.getNext()
 
-    '''
-    Now next of first Node refers to second.  So they
-    both are linked.
+class OrderedList:
+    def __init__(self):
+        self.head = None
 
-    llist.head        second              third
-         |                |                  |
-         |                |                  |
-    +----+------+     +----+------+     +----+------+
-    | 1  |  o-------->| 2  | null |     |  3 | null |
-    +----+------+     +----+------+     +----+------+
-    '''
+    def search(self,item):
+        current = self.head
+        found = False
+        stop = False
+        while current != None and not found and not stop:
+            if current.getData() == item:
+                found = True
+            else:
+                if current.getData() > item:
+                    stop = True
+                else:
+                    current = current.getNext()
 
-    second.next = third; # Link second node with the third node
+        return found
 
-    '''
-    Now next of second Node refers to third.  So all three
-    nodes are linked.
+    def add(self,item):
+        current = self.head
+        previous = None
+        stop = False
+        while current != None and not stop:
+            if current.getData() > item:
+                stop = True
+            else:
+                previous = current
+                current = current.getNext()
 
-    llist.head        second              third
-         |                |                  |
-         |                |                  |
-    +----+------+     +----+------+     +----+------+
-    | 1  |  o-------->| 2  |  o-------->|  3 | null |
-    +----+------+     +----+------+     +----+------+
-    '''
+        temp = Node(item)
+        if previous == None:
+            temp.setNext(self.head)
+            self.head = temp
+        else:
+            temp.setNext(current)
+            previous.setNext(temp)
 
-# traverse the created list and print the data of each node
+    def isEmpty(self):
+        return self.head == None
 
-def printList(self):
-    temp = self.head
-        while (temp):
-            print temp.data,
-            temp = temp.next
+    def size(self):
+        current = self.head
+        count = 0
+        while current != None:
+            count = count + 1
+            current = current.getNext()
 
-def size(self):
-    current = self.head
-    count = 0
-    while current != None:
-        count = count + 1
-        current = current.getNext()
+        return count
 
-    return count
+
+mylist = OrderedList()
+mylist.add(31)
+mylist.add(77)
+mylist.add(17)
+mylist.add(93)
+mylist.add(26)
+mylist.add(54)
+
+print(mylist.size())
+print(mylist.search(93))
+print(mylist.search(100))
