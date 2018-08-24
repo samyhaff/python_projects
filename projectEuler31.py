@@ -10,7 +10,7 @@ coeffs.reverse()
 def updateCompteur():
     compteur[0] += 1
     for i in range(0, len(compteur) - 1):
-        if compteur[i] == lim[i] + 1:
+        if compteur[i] == lim[i]:
             compteur[i] = 0
             compteur[i + 1] += 1
 
@@ -19,10 +19,11 @@ def Sum():
     for i in range(0, len(compteur)):
         s += compteur[i] * coeffs[i]
         if s == 200:
+            print(compteur)
             return True
     return False
 
-c = 0
+c = 8
 while compteur[7] != lim[7] + 1:
     updateCompteur()
     if Sum():
