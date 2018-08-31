@@ -1,18 +1,9 @@
 import random
-import turtle
 
-import turtle
-loadWindow = turtle.Screen()
-turtle.speed(1)
-turtle.colormode(255)
-turtle.pensize(1)
-
-dim_x = 500
-dim_y = 500
+dim_x = 5
+dim_y = 5
 
 grid = [[0 for i in range(dim_x)] for j in range(dim_y)]
-
-path = [1]
 visited = [1]
 
 def valid(nb):
@@ -34,11 +25,12 @@ def list_moves(nb):
     return moves
 
 def gen():
-    while len(list_moves(path[len(path) - 1])) < 1:
-        path.pop()
-    next_visit = random.choice(list_moves(path[len(path) - 1]))
-    path.append(next_visit)
+    pos = len(visited) - 1
+    while len(list_moves(visited[pos])) < 1:
+        pos -= 1
+    next_visit = random.choice(list_moves(visited[pos]))
+    visited.append(next_visit)
 
-while len(path) != dim_x * dim_y:
+while len(visited) != dim_x * dim_y:
     gen()
-print(path)
+print(visited)
