@@ -1,10 +1,26 @@
 import random
+import pygame
+import time
+import timeit
 
-dim_x = 5
-dim_y = 5
+dim_x = 10
+dim_y = 10
 
-grid = [[0 for i in range(dim_x)] for j in range(dim_y)]
 visited = [1]
+
+def init_aff():
+   pygame.init()
+   size = (500,500)
+   t = (size[0]/dim_x, size[1]/dim_y)
+   screen = pygame.display.set_mode(size)
+   screen.fill((255, 255, 255))
+   pygame.display.set_caption("Maze")
+   for y in range(dim_y):
+      for x in range(dim_x):
+         pygame.draw.rect(screen, (0,0,0), (x*int(t[1]),y*int(t[1]),int(t[0] - 3), int(t[1] - 3)), 0)
+   pygame.display.flip()
+
+init_aff()
 
 def valid(nb):
     if nb >= 1 and nb <= dim_x * dim_y:
