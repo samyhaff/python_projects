@@ -1,30 +1,30 @@
 taille = 400
 pas = taille // 20
-canDraw = True
+
 def setup():
     size(taille, taille)
     background(255, 255, 255)
-    stroke(0)
     strokeWeight(2)
-    fill(0)
-    
-def draw():
-    global canDraw
+    stroke(0)
+
+enter_x = -1
+enter_y = -1
+
+def mousePressed():
+    global enter_x, enter_y
+    if enter_x < 0 or enter_y < 0:
+        enter_x = mouseX
+        enter_y = mouseY    
+
+def draw():   
+    global enter_x, enter_y
+
     for i in range(pas, taille, pas):
-        line(i, 0, i, taille)
+        line(i, 0, i, taille) 
         line(0, i, taille, i)
-    if mousePressed:
-        if mouseButton == RIGHT:
-            canDraw = False
-            
-    if canDraw == True:
-        if mousePressed:
-            x = mouseX
-            y = mouseY
-            for i in range(1, taille // pas - 1):
-                for j in range(1, taille // pas - 1):
-                    if i * pas <= x and x <= (i + 1) * pas:
-                        if j * pas <= y and y <= (j + 1) * pas:
-                            rect(i * pas, j * pas, pas, pas)
-    
-    
+
+    if enter_x >= 0 and enter_y >= 0:
+        fill(0, 255, 0)
+        ix = enter_x // pas
+        iy = enter_y // pas
+        rect(ix * pas, iy * pas, pas, pas)
