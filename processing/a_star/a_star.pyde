@@ -7,24 +7,57 @@ def setup():
     strokeWeight(2)
     stroke(0)
 
-enter_x = -1
-enter_y = -1
+count = 0
+x = -1
+y = -1
+r, g, b = 0, 0, 0
+canClick = 1
 
 def mousePressed():
-    global enter_x, enter_y
-    if enter_x < 0 or enter_y < 0:
-        enter_x = mouseX
-        enter_y = mouseY    
+    global canClick
+    global count
+    global x
+    global y
+    global r
+    global g
+    global b
+    if mouseButton == RIGHT:
+        canClick = 0
+        print("phase initiale términée, passons aux choses sérieuses")
+    if count == 0:
+        x = mouseX
+        y = mouseY    
+        count += 1
+        r = 0
+        g = 255
+        b = 0
+    elif count == 1:
+        x = mouseX
+        y = mouseY    
+        count += 1
+        r = 255
+        g = 0
+        b = 0
+    elif canClick == 1:
+        x = mouseX
+        y = mouseY
+        r = 0
+        g = 0
+        b = 0
 
 def draw():   
-    global enter_x, enter_y
+    global count
+    global x 
+    global y
+    global r
+    global g
+    global b
 
     for i in range(pas, taille, pas):
         line(i, 0, i, taille) 
         line(0, i, taille, i)
 
-    if enter_x >= 0 and enter_y >= 0:
-        fill(0, 255, 0)
-        ix = enter_x // pas
-        iy = enter_y // pas
-        rect(ix * pas, iy * pas, pas, pas)
+    fill(r, g, b)
+    ix = x // pas
+    iy = y // pas
+    rect(ix * pas, iy * pas, pas, pas)
