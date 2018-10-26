@@ -59,10 +59,11 @@ def getF((x, y)):
     return h + g
 
 def getLowest():
+    global s
     global openSet
-    lowestF = getF(openSet[0])
-    lowest = openSet[0]
-    for nodes in range(1, len(openSet) + 1):
+    lowestF = int(taille * sqrt(2) // pas)
+    lowest = (0, 0)
+    for node in openSet:
         if getF(node) < lowestF:
             lowestF = getF(node)
             lowest = node
@@ -80,6 +81,7 @@ def valid(x, y):
     return False
 
 def getNeighboors((x, y)):
+    global neighboors
     neighboors = []
     if valid(x - 1, y):
         neighboors.append((x - 1, y))
@@ -89,7 +91,6 @@ def getNeighboors((x, y)):
         neighboors.append((x, y - 1))
     if valid(x, y + 1):
         neighboors.append((x, y + 1))    
-    return neighboors
 
 def g((x, y)):
     return abs(x - s[0]) + abs(y - s[1])
@@ -107,6 +108,7 @@ def draw():
     global closedSet
     global openSet
     global parents
+    global canClick
 
     for i in range(pas, taille, pas):
         line(i, 0, i, taille) 
@@ -117,18 +119,20 @@ def draw():
     iy = y // pas
     rect(ix * pas, iy * pas, pas, pas)
     
-    while not reachedGoal():
-        current = getLowest
-        closedSet.append(current)
-        for node in getNeighboors(current):
-            cost = g(current) + D(current, neighboor)
-            if openSet.count(neighboor) > 0 and cost < g(neighboor):
-                openSet.remove(neighboor) # path is better
-            if closedSet.count(neighboor) > 0 and cost < g(neighboor):
-                closedSet.remove(neighboor)
-            if openSet.count(neighboor) == 0:
-                gNeighboor = cost
-                openSet.append(neighboor)
-                
-                parents.append((cuurent, neighboor))
-                
+    if canClick == 0:
+        while not reachedGoal():
+            current = getLowest
+            closedSet.append(current)
+            getNeighboors(current)
+            for node in neighboors:
+                cost = g(current) + D(current, neighboor)
+                if openSet.count(neighboor) > 0 and cost < g(neighboor):
+                    openSet.remove(neighboor) # path is better
+                if closedSet.count(neighboor) > 0 and cost < g(neighboor):
+                    closedSet.remove(neighboor)
+                if openSet.count(neighboor) == 0:
+                    gNeighboor = cost
+                    openSet.append(neighboor)
+                    
+                    parents.append((cuurent, neighboor))
+                    
