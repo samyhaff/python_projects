@@ -6,6 +6,7 @@ n = int(input("jusqu'a quel nombre tester? "))
 a = 2
 c = 0
 d = 2
+listP = []
 
 start_time = time.clock()
 
@@ -17,11 +18,10 @@ for p in range(2, n):
 		while gcd(d, p) != 1:
 			d = d+1
 		if d**(p-1) % p == 1:
-			print(p)
+			listP.append(p)
 			a = 2
 			d = 2
 			c = c + 1 
 
-print(c, "nombres premiers")
-print("taux d'erreur: 25%")
+print(listP)
 print("fini en", time.clock() - start_time, "secondes")

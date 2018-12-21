@@ -36,6 +36,7 @@ def drawSnake():
 def move():
     global dir
     global snake
+    x, y = head 
     if dir == 0:
         for i in range(0, len(snake)):
             snake[i] = (snake[i][0] + 1, snake[i][1])
@@ -51,5 +52,3 @@ def draw():
     getDir()
     move()
     drawSnake()
-
-    

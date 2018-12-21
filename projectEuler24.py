@@ -2,6 +2,7 @@ import time
 import math
 
 def permutations(chaine):
+    global c
     if len(chaine) == 1:
         return [chaine]
 
@@ -12,9 +13,8 @@ def permutations(chaine):
     for perm in perms:
         for i in range(len(perm) + 1):
             result.append(perm[:i] + char + perm[i:])
-
-    return result
+            c = len(result)
+    return (result)
 
 result = permutations("0123456789")
-result.sort()
-print(result[999999])
+print(c)
