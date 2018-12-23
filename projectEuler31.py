@@ -17,7 +17,6 @@ def Sum():
     for i in range(0, len(compteur)):
         s += compteur[i] * coeffs[i]
         if s == 200:
-            print(compteur)
             return True
     return False
 

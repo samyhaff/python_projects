@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 max_iterations = 120
-density = 1000
+density = 5000
 
 X = np.linspace(-2, 1.5, density)
 Y = np.linspace(-1, 1, density)
