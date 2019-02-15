@@ -42,10 +42,10 @@ while not done:
                 l2 = np.zeros([hauteur, longueur])
                 screen.fill(BLACK)
                 init = True
-        if init == True: 
+        if init == True:
             if event.type == MOUSEBUTTONDOWN and event.button == 1:
-                x = (event.pos[0] // tailleCell) 
-                y = (event.pos[1] // tailleCell) 
+                x = (event.pos[0] // tailleCell)
+                y = (event.pos[1] // tailleCell)
                 X = x * tailleCell
                 Y = y * tailleCell
                 l1[y, x]=(l1[y, x]+1)%2
@@ -53,7 +53,7 @@ while not done:
                     pygame.draw.rect(screen, BLACK, (X - l, Y - l,tailleCell, tailleCell), 0)
                 else:
                     pygame.draw.rect(screen, GREEN, (X - l, Y - l,tailleCell, tailleCell), 0)
-            
+
     if init == False:
         l2 = np.copy(l1)
         for y in range(1, hauteur - 1):
@@ -63,7 +63,7 @@ while not done:
                     for i in range(-1, 2):
                         if (l1[y + j, x + i] == 1):
                             if i != 0 or j != 0:
-                                voisines = voisines + 1   
+                                voisines = voisines + 1
                 if (voisines < 2) or (voisines > 3):
                     l2[y,x] = 0
                 if voisines == 3:
