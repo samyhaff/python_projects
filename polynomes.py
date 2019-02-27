@@ -70,9 +70,10 @@ class Polynome:
         pass
 
     def division(self, A, B):
-        C=[0]*2+B
+        delta=len(A)
+        C=[0]*+B
         [3,2,4,5,1],[0,0,1/3,4/3,1]
-        len(A)
+
         len(B)
         A[-1]
         B[-1]
