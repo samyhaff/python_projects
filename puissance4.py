@@ -1,159 +1,95 @@
 import random
 
-board = [[0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0, 0],
-        [0, 0, 0, 1, 2, 0, 0],
-        [0, 0, 1, 2, 1, 0, 0],
-        [0, 1, 1, 2, 2, 0, 0],
-        [0, 2, 1, 2, 1, 0, 0]]
+class Puissance4:
+    def __init__(self):
+        self.board = Board()
+        self.players = [Player(0),Player(1)]
+        self.state = 0
 
-def checkMove(x, y):
-    Y = 5 - y
-    if (0 <= x) and (x < 6):
-        if (Y == 0) or (Y - 1) != 0:
-            return True
-    return False
+    def __call__(self):
+        while self.board.on:
+            self.board.check()
+            self.state += 1
+            turn = self.state % 2
+            player = self.players[turn]
+            player(self.board)
 
-def win(x, y):
-    # i = ligne
-    # j = colonne
+class Board:
+    def __init__(self,size=[7,6]):
+        self.size = size
+        self.grid = [[-1 for y in range(size[1])] for x in range(size[0])]
+        self.on = True
 
-    # test lignes
-    test = []
-    for i in range(0, 6):
-        for j in range(0, 7):
-            if len(test) != 7:
-                test.append(str(board[i][j]))
-            else:
-                chaine = "".join(test)
-                if "2222" in chaine:
-                    win = "IA"
-                    return True
-                elif "1111" in chaine:
-                    win = "joueur"
-                    return True
-                test = []
-                chaine = ""
+    def check(self):
+        sx,sy=self.size
+        for x in range(sx):
+            self.on=self.checkLine(self.grid[x])
+        for y in range(sy):
+            self.on=self.checkLine(self.grid[y])
 
-    # test colonnes
-    test = []
-    for j in range(0, 7):
-        for i in range(0, 6):
-            if len(test) != 6:
-                test.append(str(board[i][j]))
-            else:
-                chaine = "".join(test)
-                if "2222" in chaine:
-                    win = "IA"
-                    return True
-                elif "1111" in chaine:
-                    win = "joueur"
-                    return True
-                test = []
-                chaine = ""
+    def checkLine(self,line):
+        for x in range(len(line)):
+            if line[]
 
-    # test diagonales
-    val = board[x][y]
-    testx = x
-    testy = y
-    compteur = 1
-    diagonale = []
-    while checkMove(testx, testy) == True:
-        testx = testx - 1
-        testy = testy - 1
-        if board[testx][testy] == val:
-            compteur = compteur + 1
-        else:
-            break
-    if compteur != 4:
-        compteur = 1
-        while checkMove(testx, testy) == True:
-            testx = testx + 1
-            testy = testy + 1
-            if board[testx][testy] == val:
-                compteur = compteur + 1
-            else:
-                break
 
-    if compteur == 4:
-        if val == 1:
-            win = "joueur"
-            return True
-        if val == 2:
-            win = "IA"
-            return True
-    compteur = 1
 
-    return False
 
-    """
+    def randomfill(self):
+        sx,sy=self.size
+        for x in range(sx):
+            for y in range(sy):
+                self.grid[x][y]=random.randint(-1,1)
 
-    for i in range(0, 6):
-        for j in range(0, 7):
+    def __repr__(self):
+        text=""
+        lx=[]
+        for x in range(self.size[0]):
+            ly=[]
+            for y in range(self.size[1]):
+                if self.grid[x][y]==-1:
+                    ly.append(" ")
+                if self.grid[x][y]==0:
+                    ly.append("X")
+                if self.grid[x][y]==1:
+                    ly.append("O")
+            lx.append("|".join(ly))
+        text="\n".join(lx)
+        return text
 
-            if board[i][j] != 0:
-                val = board[i][j]
-                compteur = 1
+class Player:
+    def __init__(self,side):
+        self.side = side
 
-                for t in range(1, 4):
-                    if checkMove(i - t, j - t) == True:
-                        if board[i - t][j - t] == val:
-                            compteur = compteur + 1
+    def __call__(self,board): #Jouer
+        self.randomPlay(board)
 
-                if compteur == 4:
-                    if val == 1:
-                        win = "joueur"
-                    else:
-                        win = "IA"
-                    return True
-                else:
-                    compteur = 1
+    def randomPlay(self,board):
+        a=list(range(self.size[0]))
+        random.shuffle(a)
+        for e in a:
+            choice=self.choose(board,e)
+            if choice is not None:
+                x,y=choice
+                board.grid[x][y]=self.side
 
-                for k in range(1, 4):
-                    if checkMove(i + k, j + k) == True:
-                        print(i)
-                        print(j)
-                        if board[i + k][j + k] == val:
-                            compteur = compteur + 1
+    def choose(self,board,x):
+        l=list(range(self.size[1]))
+        l.reverse()
+        for y in l:
+            v=self.grid[x][y]
+            if v==0 or v==1:
+                return (x,y)
+        return None
 
-                if compteur == 4:
-                    if val == 1:
-                        win = "joueur"
-                    else:
-                        win = "IA"
-                    return True
-                else:
-                    compteur = 1
 
-    """
+    def play(self,board,x):
+        i = board.size[2]
+        if board.grid[x].count(-1) == 0 or x > "grosse valeur inutile juset la pour que le programme plante pas quand je le test":
+            while board.grid[x][i] != -1:
+                i -= 1
 
-# test
-if win(1, 4) == True:
-    print("test reussi")
-else:
-    print("TOZ")
+game = Puissance4()
+#game()
 
-"""
-
-while win() == False:
-    # tour joueur
-    x = int(input("X: "))
-    y = int(input("Y: "))
-    grid[x][y] = 1
-    while checkMove(x, y) == False or board[x][y] != 0:
-        grid[x][y] = 0
-        x = int(input("X: "))
-        y = int(input("Y: "))
-        grid[x][y] = 1
-
-    # tour IA
-    x = random.randint(0, 6)
-    y = random.randint(0, 5)
-    grid[x][y] = 2
-    while checkMove(x, y) == False or board[x][y] != 0:
-        grid[x][y] = 0
-        x = random.randint(0, 6)
-        y = random.randint(0, 5)
-        grid[x][y] = 2
-
-"""
+game.board.randomfill()
+print(str(game.board))
