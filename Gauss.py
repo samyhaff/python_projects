@@ -24,16 +24,19 @@ def elimination_bas(A, b, j):
         b[i] = b[i] - (b[i][j] / b[j][j]) * b[j]
 
 def descente(A, b):
+    """transforme A en matrice triangulaire inférieure"""
     for k in range(n - 1):
         p = pivot(A, b, k)
         elimination_bas(A, b, k)
 
 def elimination_haut(A, b, j):
+    """élimine les coeffs du haut"""
     for i in range(j):
         A[i] = A[i] - (A[i][j] / A[j][j]) * A[j]
         b[i] = b[i] - (b[i][j] / b[j][j]) * b[j]
 
 def remontee(A, b):
+    """transfome A en matrice diagonale"""
     for j in range(n - 1, 0, -1):
         elimination_haut(A, b, j)
 
