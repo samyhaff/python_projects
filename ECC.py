@@ -1,21 +1,5 @@
-import serial
 import random
 import numpy
-import matplotlib
-import scipy
-
-#ser = serial.Serial("/dev/cu.usbmodem141301")
-chaine = "i"
-
-"""
-READ SERIAL:
-
-with Serial(port="/dev/ttyACM0", baudrate=9600, timeout=1, writeTimeout=1) as port_serie:
-    if port_serie.isOpen():
-        while True:
-            ligne = port_serie.read_line()
-            print ligne
-"""
 
 def toBin(n):
     bin = []
@@ -26,6 +10,8 @@ def toBin(n):
     return ''.join(str(c) for c in bin)
 
 def simulationErreurs(n):
+    if n == 0:
+        return message
     indices = random.sample([i for i in range(0, len(message))], n)
     result = ""
     for i in range(0, len(message)):
@@ -35,12 +21,27 @@ def simulationErreurs(n):
             result += message[i]
     return result
 
+def toDecimal(n):
+    output = 0
+    for i in range(0, len(n)):
+        output += int(n[i]) * (2 ** (7 - i))
+    return output
+
+def toStr():
+    output = ""
+    n = len(messageRecu) // 8
+    for i in range(0, n):
+        output += chr(int(toDecimal(messageRecu[8 * i : 8 * (i + 1) + 1])))
+    return output
+
+chaine = "Hello, World!"
 message = ""
 for c in chaine:
     message += ''.join(str(toBin(ord(c))))
+messageRecu = simulationErreurs(2)
+chaineRecue = toStr()
 
-reception = simulationErreurs(len(message))
-
-#er.write(message.encode('utf-8'))
 print(message)
-print(reception)
+print(chaine)
+print(messageRecu)
+print(chaineRecue)
