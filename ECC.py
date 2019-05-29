@@ -1,6 +1,14 @@
 import random
 import numpy
 
+"""
+envoie du message:
+1) envoyer la chaine de 0 et de 1
+2) attendre confirmation réception de l'arduino
+3) envoyer le message
+4) balayer les bytes + afficher la lettre correspondante + altéerner la LED 
+"""
+
 def toBin(n):
     bin = []
     while n // 2 > 0 or len(bin) < 8:
@@ -33,6 +41,14 @@ def toStr():
     for i in range(0, n):
         output += chr(int(toDecimal(messageRecu[8 * i : 8 * (i + 1) + 1])))
     return output
+
+def distanceHamming(a, b):
+    s = 0
+    n = len(a)
+    for i in range(n):
+        if a[i] != b[i]:
+            s += 1
+    return s
 
 chaine = "Hello, World!"
 message = ""
