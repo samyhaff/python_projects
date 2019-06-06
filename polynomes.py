@@ -87,5 +87,5 @@ if __name__ == "__main__":
     polynome2 = Polynome(coeffs2)
     sum = polynome1 + polynome2
     mul = polynome1 * polynome2
-    der = mul.derivative()
-    print(sum,mul,der)
+    print(sum)
+    print(mul)
