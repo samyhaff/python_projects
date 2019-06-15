@@ -243,9 +243,9 @@ def creePolynome(chaine):
     for k in range(len(chaine) - 2):
         if chaine[k] == "X":
             coeffs[len(coeffs) - 1 - int(chaine[k + 2])] = 1
-    return coeffs
+    return Polynomial(coeffs)
 
-""" main """
+""" MAIN """
 
 chaine = "Hello, World!"
 message = ""
@@ -269,10 +269,8 @@ print(listeMessageEnvoye)
 print(messageRecu)
 print(chaineRecue)
 print(listeMessageRecu)
-
-polynomeEnvoye = Polynomial(listeMessageEnvoye[::-1])
-print(Polynomial([0,0,1,0,1,0,1,1]) / Polynomial([0,1,0,1,1]))
-generateur = Polynomial()
 """
 
-print(creePolynome("X^3+X^2+1"))
+polynomeMessage = Polynomial(listeMessageEnvoye[::-1])
+generateur = creePolynome("X^16+X^12+X^5=1") # détecte les erreurs pour 2 bits tant que les puissances éloignées de au plus 32k
+polynomeTransmission = polynomeMessage - (polynomeMessage / generateur)[1]
