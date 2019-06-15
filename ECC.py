@@ -3,13 +3,13 @@ import numpy
 from copy import deepcopy
 
 """
-
 envoie du message:
 1) envoyer la chaine de 0 et de 1
 2) attendre confirmation réception de l'arduino
 3) envoyer le message
 4) balayer les bytes + afficher la lettre correspondante + altéerner la LED
 
+organiser les variables => réduire complexité
 """
 
 """ transmission """
@@ -55,18 +55,6 @@ def distanceHamming(a, b):
             s += 1
     return s
 
-chaine = "Hello, World!"
-message = ""
-for c in chaine:
-    message += ''.join(str(toBin(ord(c))))
-messageRecu = simulationErreurs(2)
-chaineRecue = toStr()
-
-print(message)
-print(chaine)
-print(messageRecu)
-print(chaineRecue)
-
 """ Classe Polybomes """
 
 class Polynomial:
@@ -86,7 +74,7 @@ class Polynomial:
                 liste.append(str(coefficient) + "X^" + str(degre))
         liste.reverse()
         text = "+".join(liste)
-        text = text.replace("^1","").replace("+-","-").replace("1X","X")
+        text = text.replace("+-","-").replace("1X","X")
         return text
 
     def adapt(self,coefficients,size):
@@ -97,13 +85,14 @@ class Polynomial:
         maxdegree = max(self.degree()+1,other.degree()+1)
         cA = self.adapt(self.coefficients,maxdegree)
         cB = self.adapt(other.coefficients,maxdegree)
-        newcoefficients = [a+b for (a,b) in zip(cA, cB)]
+        newcoefficients = [(a + b) % 2 for (a,b) in zip(cA, cB)]
         A=Polynomial(newcoefficients)
         A.correct()
         return A
 
     def __sub__(self, other):
-        return self+other*Polynomial([-1])
+        # return self+other*Polynomial([-1])
+        return self + other
 
     def __mul__(self, other):
         degree = len(self.coefficients) + len(other.coefficients)
@@ -192,12 +181,12 @@ class Polynomial:
         R.correct()
         B.correct()
         Q = Polynomial([])
-        while R.degree()>=B.degree():
-            d = R.degree()-B.degree()+1
+        while R.degree() >= B.degree():
+            d = R.degree() - B.degree() + 1
             C = Polynomial([0 for i in range(d)])
-            C[-1] = R[-1]/B[-1]
-            R = R-B*C
-            Q = Q+C
+            C[-1] = R[-1] // B[-1]
+            R = R - B * C
+            Q = Q + C
         return (Q, R)
 
     def __call__(self,x):
@@ -246,4 +235,31 @@ class Polynomial:
             x=(a+b)/2
         return x
 
-print(Polynomial([0,0,7, 4]) / Polynomial([0,1, 3]) )
+""" main """
+
+chaine = "Hello, World!"
+message = ""
+for c in chaine:
+    x = toBin(ord(c))
+    message += ''.join(str(x)) # chaine envoyée en binaire
+messageRecu = simulationErreurs(2) # chaine reçue en binaire
+chaineRecue = toStr() # chaine reçue en lettres
+listeMessageEnvoye = []
+listeMessageRecu = []
+for c in message:
+    listeMessageEnvoye.append(int(c)) # chaine envoyée en liste
+for c in listeMessageRecu:
+    listeMessageRecu.append(int(c))
+
+"""
+DEBUG:
+print(message)
+print(chaine)
+print(listeMessageEnvoye)
+print(messageRecu)
+print(chaineRecue)
+print(listeMessageRecu)
+"""
+
+polynomeEnvoye = Polynomial(listeMessageEnvoye[::-1])
+print(Polynomial([0,0,1,0,1,0,1,1]) / Polynomial([0,1,0,1,1]))
