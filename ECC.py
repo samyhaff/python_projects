@@ -235,6 +235,16 @@ class Polynomial:
             x=(a+b)/2
         return x
 
+def creePolynome(chaine):
+    """ marche seulement pour les polynomes à coeffs valant 0 ou 1 """
+    coeffs = [0] * (int(chaine[2]) + 1)
+    if chaine[-1] == "1":
+        coeffs[-1] = 1
+    for k in range(len(chaine) - 2):
+        if chaine[k] == "X":
+            coeffs[len(coeffs) - 1 - int(chaine[k + 2])] = 1
+    return coeffs
+
 """ main """
 
 chaine = "Hello, World!"
@@ -259,7 +269,10 @@ print(listeMessageEnvoye)
 print(messageRecu)
 print(chaineRecue)
 print(listeMessageRecu)
-"""
 
 polynomeEnvoye = Polynomial(listeMessageEnvoye[::-1])
 print(Polynomial([0,0,1,0,1,0,1,1]) / Polynomial([0,1,0,1,1]))
+generateur = Polynomial()
+"""
+
+print(creePolynome("X^3+X^2+1"))
