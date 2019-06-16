@@ -1,16 +1,7 @@
 import random
 import numpy
 from copy import deepcopy
-
-"""
-envoie du message:
-1) envoyer la chaine de 0 et de 1
-2) attendre confirmation réception de l'arduino
-3) envoyer le message
-4) balayer les bytes + afficher la lettre correspondante + altéerner la LED
-
-organiser les variables => réduire complexité
-"""
+import serial
 
 """ transmission """
 
@@ -196,45 +187,6 @@ class Polynomial:
             sum+=c*x**n
         return sum
 
-    def allDerivatives(self):
-        B=deepcopy(self)
-        derivatives=[deepcopy(self)]
-        while B.degree()>1:
-            B.derivate()
-            derivatives.append(deepcopy(B))
-        return derivatives
-
-    def roots(self):
-        roots=[]
-        derivatives=self.allDerivatives()
-        print(derivatives)
-        derivatives.reverse()
-        old_extrema=[]
-        for derivative in derivatives:
-            new_extrema=[]
-            neglim=self.definition[0]
-            poslim=self.definition[1]
-            extrema=[neglim]+old_extrema+[poslim]
-            for i in range(len(extrema)-1):
-                if derivative(extrema[i])*derivative(extrema[i+1])<=0:
-                    new_extrema.append(derivative.gradientDescent(extrema[i],extrema[i+1]))
-            old_extrema=new_extrema[:]
-        return new_extrema
-
-    def gradientDescent(self,xa,xb,precision=10e-10):
-        if self(xa)*self(xb)>0:
-            raise Exception
-        a=min(xa,xb)
-        b=max(xa,xb)
-        x=(a+b)/2
-        while abs(self(x))>precision:
-            if self(x)*self(b)>0:
-                b=x
-            if self(x)*self(a)>0:
-                a=x
-            x=(a+b)/2
-        return x
-
 def creePolynome(chaine):
     """ marche seulement pour les polynomes à coeffs valant 0 ou 1 """
     coeffs = [0] * (int(chaine[2]) + 1)
@@ -247,7 +199,7 @@ def creePolynome(chaine):
 
 """ MAIN """
 
-chaine = "Hello, World!"
+chaine = "Bonjour!"
 message = ""
 for c in chaine:
     x = toBin(ord(c))
@@ -269,6 +221,7 @@ print(listeMessageEnvoye)
 print(messageRecu)
 print(chaineRecue)
 print(listeMessageRecu)
+
 """
 
 polynomeMessage = Polynomial(listeMessageEnvoye[::-1])
