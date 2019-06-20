@@ -76,7 +76,7 @@ class Polynomial:
         maxdegree = max(self.degree()+1,other.degree()+1)
         cA = self.adapt(self.coefficients,maxdegree)
         cB = self.adapt(other.coefficients,maxdegree)
-        newcoefficients = [(a + b) % 2 for (a,b) in zip(cA, cB)]
+        newcoefficients = [a ^ b for (a,b) in zip(cA, cB)]
         A=Polynomial(newcoefficients)
         A.correct()
         return A
@@ -196,6 +196,116 @@ def creePolynome(chaine):
         if chaine[k] == "X":
             coeffs[len(coeffs) - 1 - int(chaine[k + 2])] = 1
     return Polynomial(coeffs)
+
+""" CORPS FINIS DE CARDINAL 256 """
+
+def add(x, y):
+    return x ^ y
+
+def sub(x, y):
+    return add(x, y)
+
+def mul(x,y):
+    z = 0
+    i = 0
+    while (y>>i) > 0:
+        if y & (1<<i):
+            z ^= x<<i
+        i += 1
+    return z
+
+def bit_length(n):
+    bits = 0
+    while n >> bits: bits += 1
+    return bits
+
+def div(dividend, divisor=None):
+    dl1 = bit_length(dividend)
+    dl2 = bit_length(divisor)
+    if dl1 < dl2:
+        return dividend
+    # Else, align the most significant 1 of the divisor to the most significant 1 of the dividend (by shifting the divisor)
+    for i in range(dl1-dl2,-1,-1):
+        # Check that the dividend is divisible (useless for the first iteration but important for the next ones)
+        if dividend & (1 << i+dl2-1):
+            # If divisible, then shift the divisor to align the most significant bits and XOR (carry-less subtraction)
+            dividend ^= divisor << i
+    return dividend
+
+def power(x, p):
+    if p == 0:
+        return 0b00000001
+    if p == 1:
+        return x
+    return mul(x, pow(x, p - 1))
+
+def poly_scale(p,x):
+    r = [0] * len(p)
+    for i in range(0, len(p)):
+        r[i] = mul(p[i], x)
+    return r
+
+def gf_poly_add(p,q):
+    r = [0] * max(len(p),len(q))
+    for i in range(0,len(p)):
+        r[i+len(r)-len(p)] = p[i]
+    for i in range(0,len(q)):
+        r[i+len(r)-len(q)] ^= q[i]
+    return r
+
+def poly_mul(p,q):
+    r = [0] * (len(p)+len(q)-1)
+    for j in range(0, len(q)):
+        for i in range(0, len(p)):
+            r[i+j] ^= gf_mul(p[i], q[j])
+    return r
+
+def poly_degre(p):
+    i = 0
+    n = len(p)
+    while p[i] == 0:
+        n -= 1
+    return n
+
+def poly_div(p, q):
+    r = deepcopy(p)
+    b = deepcopy(q)
+    r.correct()
+    b.correct()
+    q = []
+    while poly_degre(r) >= poly_degre(b):
+        d = poly_degre(r) - poly_degre(b) + 1
+        c = [0 for i in range(d)]
+        c[-1] = r[-1] // b[-1]
+        r = r - b * c
+        q = q + c
+    return (q, r)
+
+def poly_eval(poly, x):
+    '''This is based on Horner's scheme for maximum efficiency.'''
+    y = poly[0]
+    for i in range(1, len(poly)):
+        y = mul(y, x) ^ poly[i]
+    return y
+
+def rs_generator_poly(nsym):
+    g = [1]
+    for i in range(0, nsym):
+        g = poly_mul(g, [1, power(0b00000010, i)])
+    return g
+
+def rs_encode_msg(msg_in, nsym):
+    '''Reed-Solomon main encoding function'''
+    gen = rs_generator_poly(nsym)
+    _, remainder = poly_div(msg_in + [0] * (len(gen)-1), gen)
+    msg_out = msg_in + remainder
+    return msg_out
+
+def rs_calc_syndromes(msg, nsym):
+    synd = [0] * nsym
+    for i in range(0, nsym):
+        synd[i] = poly_eval(msg, gf_pow(0b00000010,i))
+    return [0] + synd # pad with one 0 for mathematical precision (else we can end up with weird calculations sometimes)
 
 """ MAIN """
 
