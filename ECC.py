@@ -184,7 +184,7 @@ class Polynomial:
         """Evaluate the polynomial given an x value."""
         sum=0
         for n,c in enumerate(self.coefficients):
-            sum+=c*x**n
+            sum = add(sum, mul(c, power(x, n)))
         return sum
 
 def creePolynome(chaine):
@@ -239,73 +239,30 @@ def power(x, p):
         return x
     return mul(x, pow(x, p - 1))
 
-def poly_scale(p,x):
-    r = [0] * len(p)
-    for i in range(0, len(p)):
-        r[i] = mul(p[i], x)
-    return r
-
-def gf_poly_add(p,q):
-    r = [0] * max(len(p),len(q))
-    for i in range(0,len(p)):
-        r[i+len(r)-len(p)] = p[i]
-    for i in range(0,len(q)):
-        r[i+len(r)-len(q)] ^= q[i]
-    return r
-
-def poly_mul(p,q):
-    r = [0] * (len(p)+len(q)-1)
-    for j in range(0, len(q)):
-        for i in range(0, len(p)):
-            r[i+j] ^= gf_mul(p[i], q[j])
-    return r
-
-def poly_degre(p):
-    i = 0
-    n = len(p)
-    while p[i] == 0:
-        n -= 1
-    return n
-
-def poly_div(p, q):
-    r = deepcopy(p)
-    b = deepcopy(q)
-    r.correct()
-    b.correct()
-    q = []
-    while poly_degre(r) >= poly_degre(b):
-        d = poly_degre(r) - poly_degre(b) + 1
-        c = [0 for i in range(d)]
-        c[-1] = r[-1] // b[-1]
-        r = r - b * c
-        q = q + c
-    return (q, r)
-
-def poly_eval(poly, x):
-    '''This is based on Horner's scheme for maximum efficiency.'''
-    y = poly[0]
-    for i in range(1, len(poly)):
-        y = mul(y, x) ^ poly[i]
-    return y
-
 def rs_generator_poly(nsym):
-    g = [1]
+    g = Polynomial([1])
     for i in range(0, nsym):
-        g = poly_mul(g, [1, power(0b00000010, i)])
+        g = g * Polynomial([1, power(0b00000010, i)])
     return g
 
 def rs_encode_msg(msg_in, nsym):
     '''Reed-Solomon main encoding function'''
     gen = rs_generator_poly(nsym)
-    _, remainder = poly_div(msg_in + [0] * (len(gen)-1), gen)
+    _, remainder = msg_in / gen
     msg_out = msg_in + remainder
     return msg_out
 
 def rs_calc_syndromes(msg, nsym):
-    synd = [0] * nsym
+    synd = Polynomial([0] * nsym)
     for i in range(0, nsym):
-        synd[i] = poly_eval(msg, gf_pow(0b00000010,i))
-    return [0] + synd # pad with one 0 for mathematical precision (else we can end up with weird calculations sometimes)
+        synd[i] = msg.call(power(0b00000010,i))
+    return Polynomial([0] + synd.coefficients()) # pad with one 0 for mathematical precision (else we can end up with weird calculations sometimes)
+
+def rs_loc(e_pos):
+    e_loc = Polynomial([1])
+    for i in e_pos:
+        e_loc = e_loc * (Polynomial([1]) + Polynomial[power(0b00000010, i), 0])
+    return e_loc 
 
 """ MAIN """
 
