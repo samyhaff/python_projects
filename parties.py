@@ -26,4 +26,14 @@ def parties(l):
         parties.append(e)
     return parties
 
-print(parties([1, 2, 3]))
+def parties2(A):
+    if A == []:
+        return [[]]
+    a = A[0]
+    partiesPartielle = parties2(A[1:])
+    reste = []
+    for e in partiesPartielle:
+        reste.append([a] + e)
+    return reste + partiesPartielle
+
+print(parties2([1, 2, 3]))
