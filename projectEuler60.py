@@ -4,7 +4,7 @@ listePremiers = []
 
 def isPrime(n):
     global listePremiers
-    if n listePremiers.count(n) > 0:
+    if listePremiers.count(n) > 0:
         return True
     if n == 0 or n == 1:
         return False
@@ -15,7 +15,7 @@ def isPrime(n):
     return True
 
 def parties2(A):
-    # pas du tout efficace 
+    # pas du tout efficace
     if A == []:
         return [[]]
     a = A[0]
@@ -59,5 +59,4 @@ while not cond(a, b, c, d, e):
     if a % n == 0 and b % n == 0 and c % n == 0 and d % n == 0 and e % n == 0:
         n+=1
 
-print(a, b, c, d, e)
-print(a, b, c, d, e)
+print(a+b+c+d+e)
