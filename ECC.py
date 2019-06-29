@@ -49,6 +49,7 @@ def distanceHamming(a, b):
 """ Classe Polybomes """
 
 class Polynomial:
+    """Class that makes polynomials."""
 
     def __init__(self, coefficients):
         self.coefficients = coefficients
@@ -187,6 +188,9 @@ class Polynomial:
             sum = add(sum, mul(c, power(x, n)))
         return sum
 
+
+""" CORPS FINIS DE CARDINAL 256 """
+
 def creePolynome(chaine):
     """ marche seulement pour les polynomes à coeffs valant 0 ou 1 """
     coeffs = [0] * (int(chaine[2]) + 1)
@@ -196,8 +200,6 @@ def creePolynome(chaine):
         if chaine[k] == "X":
             coeffs[len(coeffs) - 1 - int(chaine[k + 2])] = 1
     return Polynomial(coeffs)
-
-""" CORPS FINIS DE CARDINAL 256 """
 
 def add(x, y):
     return x ^ y
@@ -262,7 +264,7 @@ def rs_loc(e_pos):
     e_loc = Polynomial([1])
     for i in e_pos:
         e_loc = e_loc * (Polynomial([1]) + Polynomial[power(0b00000010, i), 0])
-    return e_loc 
+    return e_loc
 
 """ MAIN """
 
