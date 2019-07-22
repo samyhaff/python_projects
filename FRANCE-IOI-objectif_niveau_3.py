@@ -30,8 +30,7 @@ for _ in range(1, nbJours + 1):
     nbClients = int(input().strip())
     nouveaux_clients=[]
     for _ in range(0, nbClients):
-        indice, duree = map(int, input().strip().split())
+        indice, duree = map(int, input().strip().split()) 
         nouveaux_clients.append([indice, duree])
     clients.append(nouveaux_clients)
     bibliotheque=visiter(bibliotheque,clients)
-    print(bibliotheque)
