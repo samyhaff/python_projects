@@ -50,6 +50,7 @@ def backtrack(grid):
 
 if __name__ == "__main__":
     if backtrack(grid):
-        print(grid)
+        for row in grid:
+            print(" ".join(map(str,row)))
     else:
         print("unsolvable grid")
