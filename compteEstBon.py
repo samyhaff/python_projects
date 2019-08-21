@@ -79,20 +79,47 @@ def resoudre(nb, objectif):
     return False
 
 
+
+def resoudre2(nb, objectif):
+    if resoudrePourAveugle(nb,objectif):
+        return True
+    else:
+        for couple in couples(nb):
+            for result in operations(couple):
+                nb_ = adapt(nb, result, couple)
+                if eval(result) == objectif:
+                    print(result)
+                    return True
+                if resoudre(nb_, objectif):
+                    return True
+        return False
+
+
 def resoudreTout(nb, objectif,historique=[]):
     for couple in couples(nb):
         for result in operations(couple):
             nb_ = adapt(nb, result, couple)
             if eval(result) == objectif:
                 historique.append(objectif)
-                return True
             if resoudreTout(nb_, objectif):
                 return True
     return False
 
+def resoudrePourAveugle(nb,objectif):
+    l=toInt(nb)
+    if objectif in l:
+        i=l.index(objectif)
+        print(nb[i])
+        return True
+    return False
+
+
 if __name__ == "__main__":
     numbers=toStr(numbers)
-    if resoudre(numbers, objectif):
-        print("Le compte est bon!")
+    resolu=resoudrePourAveugle(numbers,objectif)
+    if not resolu:
+        resolu=resoudre(numbers, objectif)
+    if resolu:
+        print("Le compte est bon.")
     else:
-        print("Pas de solution.")
+        print("nope.")

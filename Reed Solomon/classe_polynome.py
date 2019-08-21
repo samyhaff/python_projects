@@ -24,6 +24,7 @@ def longueur_bit(n):
     while n >> bits: bits += 1
     return bits
 
+"""à relire"""
 def div(dividend, divisor):
     dl1 = bit_length(dividend)
     dl2 = bit_length(divisor)
