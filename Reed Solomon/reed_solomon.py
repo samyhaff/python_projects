@@ -1,7 +1,7 @@
 import classe_polynomes
 import numpy as np
 
-t =
+# t =
 
 def gen():
     g = [1]

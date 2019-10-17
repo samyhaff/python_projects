@@ -60,7 +60,7 @@ if __name__ == "__main__":
     t.down()
     t.color("green")
     tree(75,t)
-    myWin.exitonclick()
+    myWin.exitonclic
     """
     myPoints = [[-100,-50],[0,100],[100,-50]]
     sierpinski(myPoints,3,t)

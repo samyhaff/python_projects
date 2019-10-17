@@ -15,7 +15,7 @@ def mul(x,y):
     i = 0
     while (y>>i) > 0:
         if y & (1<<i):
-            z ^= x<<i
+            z ^= x<<i 
         i+=1
     return z
 
@@ -30,11 +30,8 @@ def div(dividend, divisor):
     dl2 = bit_length(divisor)
     if dl1 < dl2:
         return dividend
-    # Else, align the most significant 1 of the divisor to the most significant 1 of the dividend (by shifting the divisor)
     for i in range(dl1 - dl2, -1,- 1):
-        # Check that the dividend is divisible (useless for the first iteration but important for the next ones)
         if dividend & (1 << i + dl2 - 1):
-            # If divisible, then shift the divisor to align the most significant bits and XOR (carry-less subtraction)
             dividend ^= divisor << i
     return dividend
 
