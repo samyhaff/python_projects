@@ -13,7 +13,7 @@ def encodage(A):
     _, B = A * Polynome(([0] * (2 * t)) + [1]) / gen(t)
     C =  A * Polynome(([0] * (2 * t)) + [1]) + B
     return C
-
+ 
 # D est le message reçu
 def verif(D):
     for i in range(1, 2 * t + 1):

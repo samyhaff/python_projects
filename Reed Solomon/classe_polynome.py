@@ -15,7 +15,7 @@ def mul(x,y):
     i = 0
     while (y>>i) > 0:
         if y & (1<<i):
-            z ^= x<<i 
+            z ^= x<<i
         i+=1
     return z
 
