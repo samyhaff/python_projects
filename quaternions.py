@@ -63,6 +63,22 @@ class Quaternion():
         m = abs(self) ** 2
         return Quaternion([t.a / m, t.b / m, t.c / m, t.d / m])
 
+    def vect(self):
+        return [self.b, self.c, self.d]
+
+""" test area
+
 q1 = Quaternion([1,0,0,0])
 q2 = Quaternion([1,1,1,1])
 print(q1 * ~q1)
+
+"""
+
+def rot(v, angle, u):
+    """ renvoie v tourné de angle autour de u """
+    q = Quaternion.angle(angle, u)
+    v = Quaternion([0, v[0], v[1], v[2]])
+    r = q * v * ~q
+    return r.vect()
+
+print(rot([1,0,0], pi / 2, [0,0,1]))
