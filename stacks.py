@@ -1,146 +1,94 @@
-class Stack:
-     def __init__(self):
-         self.items = []
+"""
+Stack() creates a new stack that is empty. It needs no parameters and returns an empty stack.
+push(item) adds a new item to the top of the stack. It needs the item and returns nothing.
+pop() removes the top item from the stack. It needs no parameters and returns the item. The stack is modified.
+peek() returns the top item from the stack but does not remove it. It needs no parameters. The stack is not modified.
+isEmpty() tests to see whether the stack is empty. It needs no parameters and returns a boolean value.
+size() returns the number of items on the stack. It needs no parameters and returns an integer.
+"""
 
-     def isEmpty(self):
-         return self.items == []
-
-     def push(self, item):
-         self.items.append(item)
-
-     def pop(self):
-         return self.items.pop()
-
-     def peek(self):
-         return self.items[len(self.items)-1]
-
-     def size(self):
-         return len(self.items)
-
-from pythonds.basic.stack import Stack
-
-s=Stack()
-
-print(s.isEmpty())
-s.push(4)
-s.push('dog')
-print(s.peek())
-s.push(True)
-print(s.size())
-print(s.isEmpty())
-s.push(8.4)
-print(s.pop())
-print(s.pop())
-print(s.size())
-
-def reverseString(myString):
-    s = Stack()
-    output = ""
-    for lettre in myString:
-        s.push(lettre)
-    while not s.isEmpty():
-        output = output + s.pop()
-    return output
-
-def parChecker(symbolString):
-    s = Stack()
-    balanced = True
-    index = 0
-    while index < len(symbolString) and balanced:
-        symbol = symbolString[index]
-        if symbol == "(":
-            s.push(symbol)
-        else:
-            if s.isEmpty():
-                balanced = False
-            else:
-                s.pop()
-
-        index = index + 1
-
-    if balanced and s.isEmpty():
-        return True
-    else:
-        return False
-
-print(parChecker('((()))'))
-print(parChecker('(()'))
-
-def divideBy2(decNumber):
-    remstack = Stack()
-
-    while decNumber > 0:
-        rem = decNumber % 2
-        remstack.push(rem)
-        decNumber = decNumber // 2
-
-    binString = ""
-    while not remstack.isEmpty():
-        binString = binString + str(remstack.pop())
-
-    return binString
-
-print(divideBy2(42))
-
-def baseConverter(decNumber,base):
-    digits = "0123456789ABCDEF"
-
-    remstack = Stack()
-
-    while decNumber > 0:
-        rem = decNumber % base
-        remstack.push(rem)
-        decNumber = decNumber // base
-
-    newString = ""
-    while not remstack.isEmpty():
-        newString = newString + digits[remstack.pop()]
-
-    return newString
-
-print(baseConverter(25,2))
-print(baseConverter(25,16))
-
-
-
-class TableauNoir:
-    """Classe définissant une surface sur laquelle on peut écrire,
-    que l'on peut lire et effacer, par jeu de méthodes. L'attribut modifié
-    est 'surface'"""
-
+class Stack():
 
     def __init__(self):
-        """Par défaut, notre surface est vide"""
-        self.surface = ""
-    def ecrire(self, message_a_ecrire):
-        """Méthode permettant d'écrire sur la surface du tableau.
-        Si la surface n'est pas vide, on saute une ligne avant de rajouter
-        le message à écrire"""
+        self.items = []
 
+    def push(self, item):
+        self.items.append(item)
 
-        if self.surface != "":
-            self.surface += "\n"
-        self.surface += message_a_ecrire
-    def lire(self):
-        """Cette méthode se charge d'afficher, grâce à print,
-        la surface du tableau"""
+    def isEmpty(self):
+        return (self.items == [])
 
+    def pop(self):
+        return self.items.pop()
 
-        print(self.surface)
-    def effacer(self):
-        """Cette méthode permet d'effacer la surface du tableau"""
-        self.surface = ""
+    def size(self):
+        return len(self.items)
 
-'''
+    def peek(self):
+        return self.items[-1]
 
->>> tab = TableauNoir()
->>> tab.lire()
->>> tab.ecrire("Salut tout le monde.")
->>> tab.ecrire("La forme ?")
->>> tab.lire()
-Salut tout le monde.
-La forme ?
->>> tab.effacer()
->>> tab.lire()
+def testParantheses(chaine):
+    pile = Stack()
+    for p in chaine:
+        if p == "(":
+            pile.push(1)
+        else:
+            if pile.isEmpty():
+                return False
+            pile.pop()
+    if pile.isEmpty():
+        return True
+    return False
 
-'''
+print(testParantheses("()()("))
+
+def postfixEval(postfixExpr):
+    operandStack = Stack()
+    tokenList = postfixExpr.split()
+
+    for token in tokenList:
+        if token in "0123456789":
+            operandStack.push(int(token))
+        else:
+            operand2 = operandStack.pop()
+            operand1 = operandStack.pop()
+            result = doMath(token,operand1,operand2)
+            operandStack.push(result)
+    return operandStack.pop()
+
+def doMath(op, op1, op2):
+    if op == "*":
+        return op1 * op2
+    elif op == "/":
+        return op1 / op2
+    elif op == "+":
+        return op1 + op2
+    else:
+        return op1 - op2
+
+print(postfixEval('7 8 + 3 2 + /'))
+
+"""
+Queue() creates a new queue that is empty. It needs no parameters and returns an empty queue.
+enqueue(item) adds a new item to the rear of the queue. It needs the item and returns nothing.
+dequeue() removes the front item from the queue. It needs no parameters and returns the item. The queue is modified.
+isEmpty() tests to see whether the queue is empty. It needs no parameters and returns a boolean value.
+size() returns the number of items in the queue. It needs no parameters and returns an integer.
+"""
+
+class Queue:
+    
+    def __init__(self):
+        self.items = []
+
+    def isEmpty(self):
+        return self.items == []
+
+    def enqueue(self, item):
+        self.items.insert(0,item)
+
+    def dequeue(self):
+        return self.items.pop()
+
+    def size(self):
+        return len(self.items)
