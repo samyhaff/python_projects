@@ -77,7 +77,7 @@ size() returns the number of items in the queue. It needs no parameters and retu
 """
 
 class Queue:
-    
+
     def __init__(self):
         self.items = []
 

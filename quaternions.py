@@ -1,5 +1,4 @@
 import numpy as np
-#Marc est passé par là
 
 pi = np.pi
 
