@@ -2,6 +2,8 @@ import itertools
 
 p = 2
 P = []
+irreductible = Polynome.creer([1, 0, 1, 1, 0, 0, 0, 1])
+# 100011101
 
 def pgcd(a, b):
     """algorithme d'Euclide"""
@@ -75,6 +77,10 @@ class Polynome():
     def __init__(self, c):
         self.coeffs = c
 
+    @classmethod
+    def creer(cls, c):
+        return cls([Galois(x) for x in c])
+
     def estNul(self):
         return self.coeffs == []
 
@@ -96,10 +102,10 @@ class Polynome():
         return self.coeffs[-1]
 
     def degre(self):
-        i = len(self) - 1
-        while self.coeffs[i] == Galois(0) and i > 0:
-            i -= 1
-        return i
+        d = len(self) - 1
+        while self.coeffs[d] == Galois(0) and d > 0:
+            d -= 1
+        return d
 
     def __eq__(self, other):
         return degre(self) == degre(orther) and all([x==y for (x,y) in zip(self, other)])
@@ -122,14 +128,17 @@ class Polynome():
         degDiv = diviseur.degre()
         CDdiviseur = diviseur.coeffDominant()
 
+        if degDiv == 0:
+            c = diviseur.coeffs[0]
+            return Polynome([c.inverse()]) * self, Polynome([])
+
         while reste.degre() >= degDiv:
             puissanceMonome = reste.degre() - degDiv
             zeros = [Galois(0) for _ in range(puissanceMonome)]
             div = Polynome(zeros + [reste.coeffDominant() / CDdiviseur])
             quotient += div
             reste -= div * diviseur
-
         return quotient, reste
 
-"""tests"""
-print(divmod(Polynome([Galois(1), Galois(1)]), Polynome([Galois(1), Galois(1)])))
+    def __mod__(self, other):
+        return divmod(self * other, irreductible)[1]
