@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands, tasks
 from itertools import cycle
 
-TOKEN = "NzAzMjAwOTQwNDU4NzcwNjEz.XqLJsw.djqZwgImOVdfrfGYj5R3Nrw_EN0"
+TOKEN = "NzAzMjAwOTQwNDU4NzcwNjEz.XqPu-Q.AWKWWI2lW39i2MW41e9KcbKP_0c"
 status = cycle(["0000", "0001", "0010", "0011", "0100", "0101", "0110", "0111", "1000", "1001", "1010"])
 client = commands.Bot(command_prefix = '.')
 
@@ -30,7 +30,7 @@ async def ping(ctx):
 
 @client.command(aliases = ['salut', 'bonjour'])
 async def saluer(ctx):
-    await ctx.send('Bien le bonjour.')
+    await ctx.channel.purge(limit = 1)
 
 @client.command(aliases = ['dis'])
 @commands.check(is_it_me)

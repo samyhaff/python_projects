@@ -10,5 +10,5 @@ def calcul_v(n):
     for i in range(len(v) - 1, n + 1):
         v.append((16379 * v[i]) % 65519)
 
-calcul_u(13)
-print(u)
+def w(n, i):
+    return (u[i] % n, v[i] mod )
