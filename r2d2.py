@@ -30,7 +30,7 @@ async def ping(ctx):
 
 @client.command(aliases = ['salut', 'bonjour'])
 async def saluer(ctx):
-    await ctx.channel.purge(limit = 1)
+    await ctx.send('Bien le bonjour.')
 
 @client.command(aliases = ['dis'])
 @commands.check(is_it_me)
@@ -53,6 +53,7 @@ async def kick(ctx, member : discord.Member, *, reason = None):
 @tasks.loop(seconds = 10)
 async def change_status():
     await client.change_presence(activity = discord.Game(next(status)))
+
 
 @client.event
 async def on_command_error(ctx, error):

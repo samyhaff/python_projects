@@ -3,26 +3,29 @@ import sys
 n = int(sys.stdin.readline())
 a = list(map(int, sys.stdin.readline().split(" ")))
 
-c = [0] * n
-c[0] = a[0]
-for i in range(1, n):
-    c[i] = c[i - 1] + a[i]
+def countways(a, n):
+    cnt = [0 for i in range(n)]
+    s = 0
+    s = sum(a)
 
-c2 = [0] * n
-c2[n - 1] = a[n - 1]
-for i in range(n - 2, -1, -1):
-    c2[i] = c2[i + 1] + a[i]
+    if (s % 3 != 0):
+        return 0
 
-S = sum(a)
-s = S // 3
+    s //= 3
+    ss = 0
+    for i in range(n - 1, -1, -1):
+        ss += a[i]
+        if (ss == s):
+            cnt[i] = 1
+    for i in range(n - 2, -1, -1):
+        cnt[i] += cnt[i + 1]
 
-def solve():
-    k = 0
-    if S % 3 != 0:
-        return k
-    for i in range(0, n):
-        if c[i] == s:
-            k += c2[i + 2:].count(s)
-    return k
+    ans = 0
+    ss = 0
+    for i in range(0, n - 2):
+        ss += a[i]
+        if (ss == s):
+            ans += cnt[i + 2]
+    return ans
 
-print(solve())
+print(countways(a, n))
